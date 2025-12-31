@@ -74,7 +74,7 @@ const Footer = () => {
     {
       icon: Download,
       title: 'Instant Delivery',
-      description: 'Get software immediately'
+      description: 'Get Subscription immediately'
     },
     {
       icon: Shield,
@@ -99,7 +99,7 @@ const Footer = () => {
       return;
     }
 
-    const message = encodeURIComponent("Hello Bunny Tools! I need help with software selection.");
+    const message = encodeURIComponent("Hello Bunny Tools! I need help with subscription selection.");
     const url = `https://wa.me/${whatsappNumber.replace('+', '')}?text=${message}`;
     window.open(url, '_blank');
   };
@@ -122,12 +122,12 @@ const Footer = () => {
                   <span className="text-orange-400">Bunny</span>
                   <span className="text-white">Tools</span>
                 </h2>
-                <p className="text-gray-400 text-sm">Premium Software Solutions</p>
+                <p className="text-gray-400 text-sm">Premium Subscriptions Solutions</p>
               </div>
             </Link>
             
             <p className="text-gray-400 mb-8 max-w-md">
-              Your trusted source for premium digital software tools. We provide 
+              Your trusted source for premium digital tools. We provide 
               high-quality solutions that boost productivity and streamline workflows.
             </p>
             
@@ -222,9 +222,9 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="text-xl font-bold text-white mb-2">Stay Updated</h3>
-              <p className="text-gray-400">Get notified about new software releases and updates</p>
+              <p className="text-gray-400">Get notified about new Subscriptions releases and updates</p>
             </div>
-            <div className="flex w-full md:w-auto">
+            {/* <div className="flex w-full md:w-auto">
               <input
                 type="email"
                 placeholder="Your email address"
@@ -234,7 +234,7 @@ const Footer = () => {
                 <Send className="w-4 h-4 mr-2" />
                 Subscribe
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
 
