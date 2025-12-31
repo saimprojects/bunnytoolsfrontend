@@ -93,7 +93,7 @@ const Navbar = () => {
                 <span className="text-orange-500">Bunny</span>
                 <span className="text-brand-purple">Tools</span>
               </span>
-              <span className="text-xs text-gray-500 -mt-1">Premium Software Store</span>
+              <span className="text-xs text-gray-500 -mt-1">Premium Tools Subscription Store</span>
             </div>
           </Link>
 
