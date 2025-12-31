@@ -110,7 +110,7 @@ const AboutPage = () => {
 
   const handleWhatsAppContact = () => {
     const message = encodeURIComponent("Hello Bunny Tools! I'd like to learn more about your software solutions.");
-    const url = `https://wa.me/923001234567?text=${message}`;
+    const url = `https://chat.whatsapp.com/EJeZt7XL9T3Lt6L9lAJE6k`;
     window.open(url, '_blank');
   };
 
@@ -130,7 +130,7 @@ const AboutPage = () => {
             {/* Badge */}
             <div className="inline-flex items-center px-6 py-3 rounded-full bg-gradient-to-r from-orange-500 to-yellow-500 mb-8">
               <Award className="w-5 h-5 text-white mr-2" />
-              <span className="font-bold text-white">Premium Software Provider</span>
+              <span className="font-bold text-white">Premium Subscriptions Provider</span>
             </div>
 
             {/* Main Title */}
@@ -142,7 +142,7 @@ const AboutPage = () => {
                 
                 {/* Tagline */}
                 <p className="text-2xl md:text-3xl text-gray-700 mb-8 font-medium">
-                  Empowering Productivity with Premium Software Solutions
+                  Empowering Productivity with Premium Subscriptions Solutions
                 </p>
 
                 {/* Description */}
@@ -303,10 +303,10 @@ const AboutPage = () => {
         <div className="mb-20">
           <div className="text-center max-w-3xl mx-auto mb-12">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Our <span className="gradient-text">Software Focus</span>
+              Our <span className="gradient-text">Subscriptions Focus</span>
             </h2>
             <p className="text-lg text-gray-600">
-              Specialized software solutions for every need
+              Specialized subscriptions solutions for every need
             </p>
           </div>
 
@@ -368,7 +368,7 @@ const AboutPage = () => {
               Success <span className="gradient-text">Stories</span>
             </h2>
             <p className="text-lg text-gray-600">
-              Real impact made by our software solutions
+              Real impact made by our Subscriptions solutions
             </p>
           </div>
 
@@ -417,7 +417,7 @@ const AboutPage = () => {
               to="/products"
               className="border-2 border-orange-500 text-orange-600 px-10 py-4 rounded-xl font-bold text-lg hover:bg-orange-50 transition-colors"
             >
-              Explore Our Software
+              Explore Our Tools
             </Link>
           </div>
         </div>
@@ -427,11 +427,11 @@ const AboutPage = () => {
       <div className="bg-gradient-to-r from-gray-900 to-purple-900 text-white">
         <div className="container mx-auto px-4 py-12">
           <div className="text-center">
-            <div className="h-20 w-20 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            {/* <div className="h-20 w-20 bg-gradient-to-r from-orange-500 to-yellow-500 rounded-2xl flex items-center justify-center mx-auto mb-6">
               <span className="text-3xl">🐰</span>
-            </div>
+            </div> */}
             <h3 className="text-2xl font-bold mb-4">
-              Bunny Tools - Your Software Partner
+              Bunny Tools - Your Subscriptions Partner
             </h3>
             <p className="text-gray-300 max-w-2xl mx-auto">
               We're more than just a software store. We're your partner in 

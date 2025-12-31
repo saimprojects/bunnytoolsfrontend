@@ -43,10 +43,10 @@ const Footer = () => {
   };
 
   const softwareCategories = [
-    { name: 'Development Tools', href: '/products?category=development', icon: Cpu },
-    { name: 'Database Software', href: '/products?category=database', icon: Database },
-    { name: 'Design Software', href: '/products?category=design', icon: Palette },
-    { name: 'Mobile Apps', href: '/products?category=mobile', icon: Smartphone },
+    { name: 'ChatGPT Subscriptions', href: '/products', icon: Cpu },
+    { name: 'CapCut Subscription', href: '/products', icon: Database },
+    { name: 'Canva Subscription', href: '/products', icon: Palette },
+    { name: 'All Tools', href: '/products', icon: Smartphone },
   ];
 
   const footerLinks = {
