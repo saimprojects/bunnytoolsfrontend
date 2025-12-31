@@ -44,7 +44,7 @@ const Hero = () => {
               Premium Digital
               <span className="block">
                 <span className="relative">
-                  <span className="relative z-10">Tools Subscription</span>
+                  <span className="relative z-10">Tools Subscriptions</span>
                   <span className="absolute bottom-2 left-0 w-full h-3 bg-brand-yellow opacity-30 -rotate-1"></span>
                 </span>
               </span>
