@@ -15,7 +15,7 @@ import SoftwareSolutionsPage from './pages/SoftwareSolutionsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import NotFound from './pages/NotFound';
-import ReviewsPage from './pages/ReviewsPage'; // Import ReviewsPage
+import ReviewsPage from './pages/ReviewPage';
 
 // Providers
 import { ProductsProvider } from './context/ProductsContext';
