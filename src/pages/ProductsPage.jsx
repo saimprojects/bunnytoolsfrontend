@@ -3,12 +3,12 @@ import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import ProductCard from '../components/products/ProductCard';
 import ProductFilters from '../components/products/ProductFilters';
-import { getProducts, getCategories } from '../api/api';
-import { Filter, Grid, List, Search, Sliders } from 'lucide-react';
+import { getAllProducts, getProducts, getCategories } from '../api/api';
+import { Filter, Grid, List, Search, Sliders, ChevronDown, Loader } from 'lucide-react';
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [products, setProducts] = useState([]);
+  const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -22,13 +22,19 @@ const ProductsPage = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState('default');
 
+  // Pagination states
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+
   useEffect(() => {
     fetchData();
   }, []);
 
   useEffect(() => {
     filterProducts();
-  }, [products, selectedCategory, priceRange, searchQuery, sortBy]);
+  }, [allProducts, selectedCategory, priceRange, searchQuery, sortBy]);
 
   useEffect(() => {
     const category = searchParams.get('category');
@@ -41,13 +47,15 @@ const ProductsPage = () => {
     try {
       setLoading(true);
       const [productsData, categoriesData] = await Promise.all([
-        getProducts(),
+        getAllProducts(), // Use getAllProducts instead of getProducts
         getCategories()
       ]);
-      setProducts(productsData);
+      setAllProducts(productsData);
       setCategories(categoriesData);
       setFilteredProducts(productsData);
+      setHasMore(productsData.length > itemsPerPage);
     } catch (err) {
+      console.error("Error fetching data:", err);
       setError(err.message || 'Failed to load products');
     } finally {
       setLoading(false);
@@ -55,7 +63,7 @@ const ProductsPage = () => {
   };
 
   const filterProducts = () => {
-    let filtered = [...products];
+    let filtered = [...allProducts];
 
     // Category filter
     if (selectedCategory) {
@@ -66,7 +74,7 @@ const ProductsPage = () => {
 
     // Price filter
     filtered = filtered.filter(product => {
-      const price = product.price || 0;
+      const price = parseFloat(product.price) || 0;
       return price >= priceRange[0] && price <= priceRange[1];
     });
 
@@ -81,10 +89,18 @@ const ProductsPage = () => {
     // Sort products
     switch (sortBy) {
       case 'price-low':
-        filtered.sort((a, b) => (a.price || 0) - (b.price || 0));
+        filtered.sort((a, b) => {
+          const priceA = parseFloat(a.price) || 0;
+          const priceB = parseFloat(b.price) || 0;
+          return priceA - priceB;
+        });
         break;
       case 'price-high':
-        filtered.sort((a, b) => (b.price || 0) - (a.price || 0));
+        filtered.sort((a, b) => {
+          const priceA = parseFloat(a.price) || 0;
+          const priceB = parseFloat(b.price) || 0;
+          return priceB - priceA;
+        });
         break;
       case 'name':
         filtered.sort((a, b) => a.title.localeCompare(b.title));
@@ -92,9 +108,16 @@ const ProductsPage = () => {
       case 'newest':
         filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
         break;
+      case 'oldest':
+        filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
+        break;
       default:
-        // Default sorting (featured first)
-        filtered.sort((a, b) => (b.is_featured ? 1 : 0) - (a.is_featured ? 1 : 0));
+        // Default sorting (featured first, then newest)
+        filtered.sort((a, b) => {
+          if (b.is_featured && !a.is_featured) return 1;
+          if (a.is_featured && !b.is_featured) return -1;
+          return new Date(b.created_at) - new Date(a.created_at);
+        });
     }
 
     setFilteredProducts(filtered);
@@ -102,11 +125,13 @@ const ProductsPage = () => {
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId);
+    setCurrentPage(1);
     setSearchParams(categoryId ? { category: categoryId } : {});
   };
 
   const handlePriceChange = (min, max) => {
     setPriceRange([min, max]);
+    setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
@@ -114,8 +139,23 @@ const ProductsPage = () => {
     setPriceRange([0, 100000]);
     setSearchQuery('');
     setSortBy('default');
+    setCurrentPage(1);
     setSearchParams({});
   };
+
+  const handleLoadMore = () => {
+    setCurrentPage(prev => prev + 1);
+  };
+
+  const handleItemsPerPageChange = (value) => {
+    setItemsPerPage(parseInt(value));
+    setCurrentPage(1);
+  };
+
+  // Calculate paginated products
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const currentProducts = filteredProducts.slice(0, indexOfLastItem);
+  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
 
   if (error) {
     return (
@@ -126,7 +166,7 @@ const ProductsPage = () => {
           <p className="text-gray-600 mb-8">{error}</p>
           <button
             onClick={fetchData}
-            className="bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-6 py-3 rounded-lg font-semibold"
+            className="bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-6 py-3 rounded-lg font-semibold hover:shadow-lg"
           >
             Try Again
           </button>
@@ -141,7 +181,7 @@ const ProductsPage = () => {
       <div className="bg-gradient-to-r from-brand-purple to-purple-700 text-white">
         <div className="container mx-auto px-4 py-12 md:py-16">
           <div className="max-w-3xl">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Products</h1>
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">Our Tools</h1>
             <p className="text-lg text-purple-100 mb-8">
               Discover our curated collection of premium digital products and solutions.
               Find exactly what you need for your digital journey.
@@ -149,7 +189,7 @@ const ProductsPage = () => {
             
             {/* Search Bar */}
             <div className="relative max-w-2xl">
-              <Search className="absolute left-4 top-1/2 transform -translateY-1/2 text-gray-400 w-5 h-5" />
+              <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <input
                 type="text"
                 placeholder="Search products by name or description..."
@@ -174,7 +214,7 @@ const ProductsPage = () => {
               onPriceChange={handlePriceChange}
               onReset={handleResetFilters}
               productsCount={filteredProducts.length}
-              totalProducts={products.length}
+              totalProducts={allProducts.length}
             />
           </div>
 
@@ -205,7 +245,7 @@ const ProductsPage = () => {
                     onPriceChange={handlePriceChange}
                     onReset={handleResetFilters}
                     productsCount={filteredProducts.length}
-                    totalProducts={products.length}
+                    totalProducts={allProducts.length}
                   />
                 </div>
               )}
@@ -215,25 +255,46 @@ const ProductsPage = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="text-sm text-gray-600">
-                  Showing <span className="font-bold">{filteredProducts.length}</span> of{' '}
-                  <span className="font-bold">{products.length}</span> products
+                  Showing <span className="font-bold">{Math.min(currentProducts.length, filteredProducts.length)}</span> of{' '}
+                  <span className="font-bold">{filteredProducts.length}</span> filtered products{' '}
+                  <span className="text-gray-400">({allProducts.length} total)</span>
                 </div>
                 
-                <div className="flex items-center space-x-4">
-                  {/* Sort Dropdown */}
-                  <div className="relative">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+                  {/* Items Per Page */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">Show:</span>
                     <select
-                      value={sortBy}
-                      onChange={(e) => setSortBy(e.target.value)}
-                      className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                      value={itemsPerPage}
+                      onChange={(e) => handleItemsPerPageChange(e.target.value)}
+                      className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-brand-purple focus:border-transparent"
                     >
-                      <option value="default">Sort by: Featured</option>
-                      <option value="price-low">Price: Low to High</option>
-                      <option value="price-high">Price: High to Low</option>
-                      <option value="name">Name: A to Z</option>
-                      <option value="newest">Newest First</option>
+                      <option value="12">12</option>
+                      <option value="24">24</option>
+                      <option value="36">36</option>
+                      <option value="48">48</option>
+                      <option value="100">All</option>
                     </select>
-                    <Filter className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                  </div>
+
+                  {/* Sort Dropdown */}
+                  <div className="flex items-center space-x-2">
+                    <span className="text-sm text-gray-600">Sort by:</span>
+                    <div className="relative">
+                      <select
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                        className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent"
+                      >
+                        <option value="default">Featured</option>
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="name">Name: A to Z</option>
+                      </select>
+                      <Filter className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    </div>
                   </div>
 
                   {/* View Toggle */}
@@ -261,7 +322,7 @@ const ProductsPage = () => {
                 ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
                 : "space-y-6"
               }>
-                {[...Array(6)].map((_, i) => (
+                {[...Array(12)].map((_, i) => (
                   <div key={i} className="animate-pulse">
                     <div className="bg-gray-200 rounded-2xl h-64 mb-4"></div>
                     <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -284,96 +345,149 @@ const ProductsPage = () => {
                 </button>
               </div>
             ) : viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {filteredProducts.map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {currentProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} />
+                  ))}
+                </div>
+
+                {/* Load More Button */}
+                {currentProducts.length < filteredProducts.length && (
+                  <div className="text-center mt-12">
+                    <button
+                      onClick={handleLoadMore}
+                      disabled={loadingMore}
+                      className="bg-white border-2 border-brand-purple text-brand-purple px-8 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center mx-auto space-x-2 min-w-[200px]"
+                    >
+                      {loadingMore ? (
+                        <>
+                          <Loader className="w-5 h-5 animate-spin" />
+                          <span>Loading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Load More</span>
+                          <ChevronDown className="w-5 h-5" />
+                        </>
+                      )}
+                    </button>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Showing {currentProducts.length} of {filteredProducts.length} products
+                    </p>
+                  </div>
+                )}
+              </>
             ) : (
-              <div className="space-y-6">
-                {filteredProducts.map((product) => (
-                  <div 
-                    key={product.id} 
-                    className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
-                  >
-                    <div className="flex flex-col md:flex-row">
-                      {/* Image */}
-                      <div className="md:w-1/4">
-                        {product.images && product.images.length > 0 ? (
-                          <img
-                            src={product.images[0].image}
-                            alt={product.title}
-                            className="w-full h-64 md:h-full object-cover"
-                          />
-                        ) : (
-                          <div className="w-full h-64 md:h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
-                            <div className="text-gray-400 text-center">
-                              <div className="text-4xl mb-2">📷</div>
-                              <div className="text-sm">No Image</div>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-
-                      {/* Details */}
-                      <div className="md:w-3/4 p-6">
-                        <div className="flex flex-col h-full justify-between">
-                          <div>
-                            <div className="flex items-start justify-between mb-3">
-                              <h3 className="text-xl font-bold text-gray-900">{product.title}</h3>
-                              <span className="text-2xl font-bold text-brand-purple">
-                                Rs. {product.price || 'Contact'}
-                              </span>
-                            </div>
-                            
-                            {/* Categories */}
-                            <div className="flex flex-wrap gap-2 mb-4">
-                              {product.categories?.map(category => (
-                                <span
-                                  key={category.id}
-                                  className="px-3 py-1 bg-purple-50 text-brand-purple text-sm rounded-full"
-                                >
-                                  {category.name}
-                                </span>
-                              ))}
-                            </div>
-
-                            {/* Description */}
-                            <div 
-                              className="text-gray-600 line-clamp-2 mb-6"
-                              dangerouslySetInnerHTML={{ 
-                                __html: product.description?.substring(0, 200) + '...' || '' 
-                              }}
+              <>
+                <div className="space-y-6">
+                  {currentProducts.map((product) => (
+                    <div 
+                      key={product.id} 
+                      className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
+                    >
+                      <div className="flex flex-col md:flex-row">
+                        {/* Image */}
+                        <div className="md:w-1/4">
+                          {product.images && product.images.length > 0 ? (
+                            <img
+                              src={product.images[0].image}
+                              alt={product.title}
+                              className="w-full h-64 md:h-full object-cover"
                             />
-                          </div>
-
-                          {/* Actions */}
-                          <div className="flex items-center justify-between">
-                            <div className="text-sm text-gray-500">
-                              {product.stock ? `${product.stock} in stock` : 'In Stock'}
+                          ) : (
+                            <div className="w-full h-64 md:h-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                              <div className="text-gray-400 text-center">
+                                <div className="text-4xl mb-2">📷</div>
+                                <div className="text-sm">No Image</div>
+                              </div>
                             </div>
-                            <div className="flex space-x-3">
-                              <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                                View Details
-                              </button>
-                              <button className="px-4 py-2 bg-gradient-to-r from-brand-purple to-brand-purple-light text-white rounded-lg hover:shadow-lg">
-                                Add to Cart
-                              </button>
+                          )}
+                        </div>
+
+                        {/* Details */}
+                        <div className="md:w-3/4 p-6">
+                          <div className="flex flex-col h-full justify-between">
+                            <div>
+                              <div className="flex items-start justify-between mb-3">
+                                <h3 className="text-xl font-bold text-gray-900">{product.title}</h3>
+                                <span className="text-2xl font-bold text-brand-purple">
+                                  Rs. {product.price || 'Contact'}
+                                </span>
+                              </div>
+                              
+                              {/* Categories */}
+                              <div className="flex flex-wrap gap-2 mb-4">
+                                {product.categories?.map(category => (
+                                  <span
+                                    key={category.id}
+                                    className="px-3 py-1 bg-purple-50 text-brand-purple text-sm rounded-full"
+                                  >
+                                    {category.name}
+                                  </span>
+                                ))}
+                              </div>
+
+                              {/* Description */}
+                              <div 
+                                className="text-gray-600 line-clamp-2 mb-6"
+                                dangerouslySetInnerHTML={{ 
+                                  __html: product.description?.substring(0, 200) + '...' || '' 
+                                }}
+                              />
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center justify-between">
+                              <div className="text-sm text-gray-500">
+                                {product.stock ? `${product.stock} in stock` : 'In Stock'}
+                              </div>
+                              <div className="flex space-x-3">
+                                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
+                                  View Details
+                                </button>
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </div>
+                  ))}
+                </div>
+
+                {/* Load More Button for List View */}
+                {currentProducts.length < filteredProducts.length && (
+                  <div className="text-center mt-12">
+                    <button
+                      onClick={handleLoadMore}
+                      disabled={loadingMore}
+                      className="bg-white border-2 border-brand-purple text-brand-purple px-8 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center mx-auto space-x-2 min-w-[200px]"
+                    >
+                      {loadingMore ? (
+                        <>
+                          <Loader className="w-5 h-5 animate-spin" />
+                          <span>Loading...</span>
+                        </>
+                      ) : (
+                        <>
+                          <span>Load More</span>
+                          <ChevronDown className="w-5 h-5" />
+                        </>
+                      )}
+                    </button>
                   </div>
-                ))}
-              </div>
+                )}
+              </>
             )}
 
-            {/* Load More Button */}
-            {filteredProducts.length > 0 && filteredProducts.length < products.length && (
-              <div className="text-center mt-12">
-                <button className="bg-white border-2 border-brand-purple text-brand-purple px-8 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-colors">
-                  Load More Products
+            {/* Show All Button - Alternative */}
+            {filteredProducts.length > 0 && currentProducts.length < filteredProducts.length && (
+              <div className="text-center mt-8">
+                <button
+                  onClick={() => setItemsPerPage(100)}
+                  className="text-brand-purple hover:text-purple-700 font-medium text-sm"
+                >
+                  Show all {filteredProducts.length} products
                 </button>
               </div>
             )}

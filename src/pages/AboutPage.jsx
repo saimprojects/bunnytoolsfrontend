@@ -299,42 +299,7 @@ const AboutPage = () => {
           </div>
         </div>
 
-        {/* Software Categories */}
-        <div className="mb-20">
-          <div className="text-center max-w-3xl mx-auto mb-12">
-            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Our <span className="gradient-text">Subscriptions Focus</span>
-            </h2>
-            <p className="text-lg text-gray-600">
-              Specialized subscriptions solutions for every need
-            </p>
-          </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {softwareCategories.map((category, index) => (
-              <div 
-                key={index}
-                className="bg-white rounded-2xl border border-gray-200 p-8 hover:shadow-xl transition-all duration-500 hover:-translate-y-2"
-              >
-                <div className="h-14 w-14 bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl flex items-center justify-center mb-6">
-                  <category.icon className="w-7 h-7 text-white" />
-                </div>
-                
-                <h3 className="text-2xl font-bold text-gray-900 mb-3">{category.title}</h3>
-                <p className="text-gray-600 mb-6">{category.description}</p>
-                
-                <div className="space-y-3">
-                  {category.features.map((feature, idx) => (
-                    <div key={idx} className="flex items-center">
-                      <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                      <span className="text-gray-700">{feature}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
 
         {/* Principles */}
         <div className="bg-gradient-to-r from-orange-500 to-purple-600 rounded-3xl p-8 md:p-12 mb-20">

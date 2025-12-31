@@ -1,66 +1,3 @@
-// // src/api.js
-
-// // Vite env: .env file mein VITE_API_BASE_URL set kar sakte ho
-// // Example: VITE_API_BASE_URL=http://127.0.0.1:8000
-// const API_BASE_URL =
-//   import.meta.env.VITE_API_BASE_URL?.replace(/\/$/, "") || "http://127.0.0.1:8000";
-
-// async function request(path, options = {}) {
-//   const url = `${API_BASE_URL}${path.startsWith("/") ? "" : "/"}${path}`;
-
-//   const res = await fetch(url, {
-//     ...options,
-//     headers: {
-//       "Accept": "application/json",
-//       ...(options.headers || {}),
-//     },
-//   });
-
-//   // Agar JSON ke bajaye HTML aa rahi ho to yahin pe clear error mil jayega
-//   const contentType = res.headers.get("content-type") || "";
-//   const isJson = contentType.includes("application/json");
-
-//   if (!res.ok) {
-//     // Try best to extract error message
-//     let message = `Request failed: ${res.status} ${res.statusText}`;
-//     try {
-//       const text = await res.text();
-//       message = text?.slice(0, 300) || message;
-//     } catch (_) {}
-//     throw new Error(message);
-//   }
-
-//   if (!isJson) {
-//     const text = await res.text();
-//     throw new Error(
-//       `Expected JSON but got: ${contentType}. Response starts with: ${text.slice(0, 60)}`
-//     );
-//   }
-
-//   return res.json();
-// }
-
-// // ✅ API functions
-// export async function getProducts() {
-//   const data = await request("/api/products/");
-//   return Array.isArray(data) ? data : (data.results || []);
-// }
-
-// export async function getProductById(id) {
-//   return request(`/api/products/${id}/`);
-// }
-
-// export async function getCategories() {
-//   const data = await request("/api/categories/");
-//   return Array.isArray(data) ? data : (data.results || []);
-// }
-
-// export async function getWhatsAppNumber() {
-//   const data = await request("/api/whatsapp/");
-//   return data.whatsapp_number;
-// }
-
-
 // src/api.js
 
 // Env se base URL lo
@@ -113,9 +50,56 @@ async function request(path, options = {}) {
    API METHODS
    ========================= */
 
-export async function getProducts() {
-  const data = await request("/api/products/");
-  return data?.results ?? data ?? [];
+// Updated: getProducts function with pagination support
+export async function getProducts(page = 1, pageSize = 100) {
+  try {
+    const data = await request(`/api/products/?page=${page}&page_size=${pageSize}`);
+    
+    // Return full response including pagination info
+    return data;
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    throw error;
+  }
+}
+
+// New: Function to get all products (handles pagination automatically)
+export async function getAllProducts() {
+  try {
+    let allProducts = [];
+    let nextUrl = '/api/products/';
+    let page = 1;
+    const maxPages = 10; // Safety limit
+    
+    while (nextUrl && page <= maxPages) {
+      const data = await request(nextUrl);
+      
+      if (data && data.results) {
+        allProducts = [...allProducts, ...data.results];
+        nextUrl = data.next;
+      } else {
+        break;
+      }
+      
+      page++;
+    }
+    
+    return allProducts;
+  } catch (error) {
+    console.error("Error fetching all products:", error);
+    throw error;
+  }
+}
+
+// Original getProducts function for backward compatibility (returns only array)
+export async function getProductsArray() {
+  try {
+    const data = await request("/api/products/");
+    return data?.results ?? data ?? [];
+  } catch (error) {
+    console.error("Error fetching products:", error);
+    return [];
+  }
 }
 
 export async function getProductById(id) {
@@ -133,8 +117,6 @@ export async function getWhatsAppNumber() {
   return data?.whatsapp_number || null;
 }
 
-// api.js - Existing code ke saath add karein
-
 /* =========================
    REVIEWS API METHODS
    ========================= */
@@ -151,7 +133,6 @@ export async function getReviewsByProduct(productId) {
 }
 
 export async function getReviewStats() {
-  // Agar aapke paas review stats ka alag endpoint hai
   try {
     const data = await request("/api/review-stats/");
     return data;

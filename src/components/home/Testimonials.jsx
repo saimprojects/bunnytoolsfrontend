@@ -8,37 +8,37 @@ const Testimonials = () => {
 
   const testimonials = [
     {
-      name: "Ahmed Raza",
-      role: "CEO, TechSolutions Inc.",
-      content: "DigitalBuddy transformed our digital infrastructure completely. Their products and support are exceptional!",
+      name: "Hira Malik",
+      role: ".",
+      content: "Very reliable service. Got my LinkedIn Premium and VidIQ instantly. Customer support is super helpful.",
       rating: 5,
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ahmed"
     },
     {
       name: "Sara Khan",
-      role: "Marketing Director",
-      content: "The digital marketing services helped us increase our online presence by 300% in just 3 months!",
+      role: "",
+      content: "Affordable prices and real accounts. I’ve been using their tools for months without any issues",
       rating: 5,
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Sara"
     },
     {
       name: "Ali Hassan",
-      role: "Startup Founder",
-      content: "Their custom web development solution saved us months of development time. Highly recommended!",
+      role: "",
+      content: "Best platform for premium tools. I got Google AI and CapCut Pro in minutes. Smooth experience and great support",
       rating: 5,
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Ali"
     },
     {
       name: "Fatima Ahmed",
-      role: "E-commerce Manager",
-      content: "The e-commerce platform they built for us is seamless and boosted our sales significantly.",
+      role: "",
+      content: "Bought ChatGPT Plus and Canva Pro from here. Instant delivery and 100% genuine access. Highly recommended!",
       rating: 4,
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Fatima"
     },
     {
       name: "Omar Sheikh",
-      role: "IT Manager",
-      content: "Reliable hardware solutions with excellent after-sales support. Great partnership!",
+      role: "",
+      content: "Perfect place for digital creators. All premium tools in one place at a very reasonable price.",
       rating: 5,
       image: "https://api.dicebear.com/7.x/avataaars/svg?seed=Omar"
     }
