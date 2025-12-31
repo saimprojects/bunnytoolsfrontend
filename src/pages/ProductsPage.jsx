@@ -1,13 +1,15 @@
 // src/pages/ProductsPage.jsx
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import ProductCard from '../components/products/ProductCard';
 import ProductFilters from '../components/products/ProductFilters';
-import { getAllProducts, getProducts, getCategories } from '../api/api';
+import { getAllProducts, getCategories } from '../api/api';
 import { Filter, Grid, List, Search, Sliders, ChevronDown, Loader } from 'lucide-react';
 
 const ProductsPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
+  
   const [allProducts, setAllProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [filteredProducts, setFilteredProducts] = useState([]);
@@ -20,13 +22,10 @@ const ProductsPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('');
   const [priceRange, setPriceRange] = useState([0, 100000]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('default');
+  const [sortBy, setSortBy] = useState('newest');
 
-  // Pagination states
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(12);
-  const [loadingMore, setLoadingMore] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
+  // Simple load more pagination
+  const [visibleCount, setVisibleCount] = useState(12);
 
   useEffect(() => {
     fetchData();
@@ -46,16 +45,20 @@ const ProductsPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
+      setError(null);
+      
       const [productsData, categoriesData] = await Promise.all([
-        getAllProducts(), // Use getAllProducts instead of getProducts
+        getAllProducts(),
         getCategories()
       ]);
+      
+      console.log('Total products loaded:', productsData.length);
+      
       setAllProducts(productsData);
       setCategories(categoriesData);
       setFilteredProducts(productsData);
-      setHasMore(productsData.length > itemsPerPage);
     } catch (err) {
-      console.error("Error fetching data:", err);
+      console.error("Error in fetchData:", err);
       setError(err.message || 'Failed to load products');
     } finally {
       setLoading(false);
@@ -105,57 +108,46 @@ const ProductsPage = () => {
       case 'name':
         filtered.sort((a, b) => a.title.localeCompare(b.title));
         break;
-      case 'newest':
-        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-        break;
       case 'oldest':
         filtered.sort((a, b) => new Date(a.created_at) - new Date(b.created_at));
         break;
-      default:
-        // Default sorting (featured first, then newest)
-        filtered.sort((a, b) => {
-          if (b.is_featured && !a.is_featured) return 1;
-          if (a.is_featured && !b.is_featured) return -1;
-          return new Date(b.created_at) - new Date(a.created_at);
-        });
+      default: // 'newest'
+        filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
     }
 
     setFilteredProducts(filtered);
+    setVisibleCount(12); // Reset to first page when filters change
   };
 
   const handleCategoryChange = (categoryId) => {
     setSelectedCategory(categoryId);
-    setCurrentPage(1);
     setSearchParams(categoryId ? { category: categoryId } : {});
   };
 
   const handlePriceChange = (min, max) => {
     setPriceRange([min, max]);
-    setCurrentPage(1);
   };
 
   const handleResetFilters = () => {
     setSelectedCategory('');
     setPriceRange([0, 100000]);
     setSearchQuery('');
-    setSortBy('default');
-    setCurrentPage(1);
+    setSortBy('newest');
+    setVisibleCount(12);
     setSearchParams({});
   };
 
   const handleLoadMore = () => {
-    setCurrentPage(prev => prev + 1);
+    setVisibleCount(prev => prev + 12);
   };
 
-  const handleItemsPerPageChange = (value) => {
-    setItemsPerPage(parseInt(value));
-    setCurrentPage(1);
+  const handleViewDetails = (productId) => {
+    navigate(`/product/${productId}`);
   };
 
-  // Calculate paginated products
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const currentProducts = filteredProducts.slice(0, indexOfLastItem);
-  const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
+  // Get currently visible products
+  const visibleProducts = filteredProducts.slice(0, visibleCount);
+  const hasMoreProducts = visibleProducts.length < filteredProducts.length;
 
   if (error) {
     return (
@@ -255,28 +247,12 @@ const ProductsPage = () => {
             <div className="bg-white rounded-xl border border-gray-200 p-4 mb-6">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="text-sm text-gray-600">
-                  Showing <span className="font-bold">{Math.min(currentProducts.length, filteredProducts.length)}</span> of{' '}
-                  <span className="font-bold">{filteredProducts.length}</span> filtered products{' '}
+                  Showing <span className="font-bold">{Math.min(visibleProducts.length, filteredProducts.length)}</span> of{' '}
+                  <span className="font-bold">{filteredProducts.length}</span> products{' '}
                   <span className="text-gray-400">({allProducts.length} total)</span>
                 </div>
                 
                 <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                  {/* Items Per Page */}
-                  <div className="flex items-center space-x-2">
-                    <span className="text-sm text-gray-600">Show:</span>
-                    <select
-                      value={itemsPerPage}
-                      onChange={(e) => handleItemsPerPageChange(e.target.value)}
-                      className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:ring-2 focus:ring-brand-purple focus:border-transparent"
-                    >
-                      <option value="12">12</option>
-                      <option value="24">24</option>
-                      <option value="36">36</option>
-                      <option value="48">48</option>
-                      <option value="100">All</option>
-                    </select>
-                  </div>
-
                   {/* Sort Dropdown */}
                   <div className="flex items-center space-x-2">
                     <span className="text-sm text-gray-600">Sort by:</span>
@@ -286,7 +262,6 @@ const ProductsPage = () => {
                         onChange={(e) => setSortBy(e.target.value)}
                         className="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-brand-purple focus:border-transparent"
                       >
-                        <option value="default">Featured</option>
                         <option value="newest">Newest First</option>
                         <option value="oldest">Oldest First</option>
                         <option value="price-low">Price: Low to High</option>
@@ -322,7 +297,7 @@ const ProductsPage = () => {
                 ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" 
                 : "space-y-6"
               }>
-                {[...Array(12)].map((_, i) => (
+                {[...Array(6)].map((_, i) => (
                   <div key={i} className="animate-pulse">
                     <div className="bg-gray-200 rounded-2xl h-64 mb-4"></div>
                     <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -347,33 +322,23 @@ const ProductsPage = () => {
             ) : viewMode === 'grid' ? (
               <>
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {currentProducts.map((product) => (
-                    <ProductCard key={product.id} product={product} />
+                  {visibleProducts.map((product) => (
+                    <ProductCard key={product.id} product={product} onViewDetails={() => handleViewDetails(product.id)} />
                   ))}
                 </div>
 
                 {/* Load More Button */}
-                {currentProducts.length < filteredProducts.length && (
+                {hasMoreProducts && (
                   <div className="text-center mt-12">
                     <button
                       onClick={handleLoadMore}
-                      disabled={loadingMore}
-                      className="bg-white border-2 border-brand-purple text-brand-purple px-8 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center mx-auto space-x-2 min-w-[200px]"
+                      className="bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg flex items-center justify-center mx-auto space-x-2 min-w-[200px]"
                     >
-                      {loadingMore ? (
-                        <>
-                          <Loader className="w-5 h-5 animate-spin" />
-                          <span>Loading...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Load More</span>
-                          <ChevronDown className="w-5 h-5" />
-                        </>
-                      )}
+                      <span>Load More</span>
+                      <ChevronDown className="w-5 h-5" />
                     </button>
                     <p className="text-sm text-gray-500 mt-2">
-                      Showing {currentProducts.length} of {filteredProducts.length} products
+                      Showing {visibleProducts.length} of {filteredProducts.length} products
                     </p>
                   </div>
                 )}
@@ -381,7 +346,7 @@ const ProductsPage = () => {
             ) : (
               <>
                 <div className="space-y-6">
-                  {currentProducts.map((product) => (
+                  {visibleProducts.map((product) => (
                     <div 
                       key={product.id} 
                       className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow"
@@ -440,13 +405,14 @@ const ProductsPage = () => {
                             {/* Actions */}
                             <div className="flex items-center justify-between">
                               <div className="text-sm text-gray-500">
-                                {product.stock ? `${product.stock} in stock` : 'In Stock'}
+                                Available
                               </div>
-                              <div className="flex space-x-3">
-                                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50">
-                                  View Details
-                                </button>
-                              </div>
+                              <button 
+                                onClick={() => handleViewDetails(product.id)}
+                                className="px-4 py-2 bg-gradient-to-r from-brand-purple to-brand-purple-light text-white rounded-lg hover:shadow-lg"
+                              >
+                                View Details
+                              </button>
                             </div>
                           </div>
                         </div>
@@ -456,35 +422,25 @@ const ProductsPage = () => {
                 </div>
 
                 {/* Load More Button for List View */}
-                {currentProducts.length < filteredProducts.length && (
+                {hasMoreProducts && (
                   <div className="text-center mt-12">
                     <button
                       onClick={handleLoadMore}
-                      disabled={loadingMore}
-                      className="bg-white border-2 border-brand-purple text-brand-purple px-8 py-3 rounded-xl font-semibold hover:bg-purple-50 transition-colors flex items-center justify-center mx-auto space-x-2 min-w-[200px]"
+                      className="bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-8 py-3 rounded-xl font-semibold hover:shadow-lg flex items-center justify-center mx-auto space-x-2 min-w-[200px]"
                     >
-                      {loadingMore ? (
-                        <>
-                          <Loader className="w-5 h-5 animate-spin" />
-                          <span>Loading...</span>
-                        </>
-                      ) : (
-                        <>
-                          <span>Load More</span>
-                          <ChevronDown className="w-5 h-5" />
-                        </>
-                      )}
+                      <span>Load More</span>
+                      <ChevronDown className="w-5 h-5" />
                     </button>
                   </div>
                 )}
               </>
             )}
 
-            {/* Show All Button - Alternative */}
-            {filteredProducts.length > 0 && currentProducts.length < filteredProducts.length && (
+            {/* Show All Button */}
+            {hasMoreProducts && (
               <div className="text-center mt-8">
                 <button
-                  onClick={() => setItemsPerPage(100)}
+                  onClick={() => setVisibleCount(filteredProducts.length)}
                   className="text-brand-purple hover:text-purple-700 font-medium text-sm"
                 >
                   Show all {filteredProducts.length} products

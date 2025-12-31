@@ -1,9 +1,5 @@
 // src/api.js
 
-// Env se base URL lo
-// .env.local  -> VITE_API_BASE_URL=http://127.0.0.1:8000
-// Vercel env  -> VITE_API_BASE_URL=https://bunnytools.up.railway.app
-
 const RAW_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 if (!RAW_BASE_URL) {
@@ -14,8 +10,16 @@ if (!RAW_BASE_URL) {
 const API_BASE_URL = RAW_BASE_URL.replace(/\/+$/, "");
 
 async function request(path, options = {}) {
-  const cleanPath = path.startsWith("/") ? path : `/${path}`;
-  const url = `${API_BASE_URL}${cleanPath}`;
+  let url;
+  
+  // Check if path is already a full URL (for pagination next/previous URLs)
+  if (path.startsWith('http://') || path.startsWith('https://')) {
+    url = path;
+  } else {
+    // Relative path
+    const cleanPath = path.startsWith("/") ? path : `/${path}`;
+    url = `${API_BASE_URL}${cleanPath}`;
+  }
 
   const res = await fetch(url, {
     ...options,
@@ -50,55 +54,60 @@ async function request(path, options = {}) {
    API METHODS
    ========================= */
 
-// Updated: getProducts function with pagination support
-export async function getProducts(page = 1, pageSize = 100) {
-  try {
-    const data = await request(`/api/products/?page=${page}&page_size=${pageSize}`);
-    
-    // Return full response including pagination info
-    return data;
-  } catch (error) {
-    console.error("Error fetching products:", error);
-    throw error;
-  }
-}
-
-// New: Function to get all products (handles pagination automatically)
-export async function getAllProducts() {
-  try {
-    let allProducts = [];
-    let nextUrl = '/api/products/';
-    let page = 1;
-    const maxPages = 10; // Safety limit
-    
-    while (nextUrl && page <= maxPages) {
-      const data = await request(nextUrl);
-      
-      if (data && data.results) {
-        allProducts = [...allProducts, ...data.results];
-        nextUrl = data.next;
-      } else {
-        break;
-      }
-      
-      page++;
-    }
-    
-    return allProducts;
-  } catch (error) {
-    console.error("Error fetching all products:", error);
-    throw error;
-  }
-}
-
-// Original getProducts function for backward compatibility (returns only array)
-export async function getProductsArray() {
+// Simple function for single page
+export async function getProducts() {
   try {
     const data = await request("/api/products/");
-    return data?.results ?? data ?? [];
+    // Return just the array of products
+    return data?.results || data || [];
   } catch (error) {
     console.error("Error fetching products:", error);
     return [];
+  }
+}
+
+// Function to get ALL products with pagination handling
+export async function getAllProducts() {
+  try {
+    let allProducts = [];
+    let currentUrl = "/api/products/";
+    let page = 1;
+    const maxPages = 5; // Safety limit
+    
+    while (currentUrl && page <= maxPages) {
+      try {
+        const data = await request(currentUrl);
+        
+        if (data && data.results && data.results.length > 0) {
+          allProducts = [...allProducts, ...data.results];
+          currentUrl = data.next; // Next page URL (could be absolute or relative)
+          
+          // If no next page, break
+          if (!currentUrl) break;
+          
+          page++;
+        } else {
+          break;
+        }
+      } catch (pageError) {
+        console.error(`Error fetching page ${page}:`, pageError);
+        break;
+      }
+    }
+    
+    console.log(`Fetched ${allProducts.length} products from ${page-1} pages`);
+    return allProducts;
+  } catch (error) {
+    console.error("Error in getAllProducts:", error);
+    
+    // Fallback: Try to get at least one page
+    try {
+      const fallbackData = await request("/api/products/");
+      return fallbackData?.results || fallbackData || [];
+    } catch (fallbackError) {
+      console.error("Fallback also failed:", fallbackError);
+      return [];
+    }
   }
 }
 
@@ -108,13 +117,23 @@ export async function getProductById(id) {
 }
 
 export async function getCategories() {
-  const data = await request("/api/categories/");
-  return data?.results ?? data ?? [];
+  try {
+    const data = await request("/api/categories/");
+    return data?.results || data || [];
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    return [];
+  }
 }
 
 export async function getWhatsAppNumber() {
-  const data = await request("/api/whatsapp/");
-  return data?.whatsapp_number || null;
+  try {
+    const data = await request("/api/whatsapp/");
+    return data?.whatsapp_number || null;
+  } catch (error) {
+    console.error("Error fetching WhatsApp number:", error);
+    return null;
+  }
 }
 
 /* =========================
@@ -122,14 +141,24 @@ export async function getWhatsAppNumber() {
    ========================= */
 
 export async function getReviews() {
-  const data = await request("/api/reviews/");
-  return data?.results ?? data ?? [];
+  try {
+    const data = await request("/api/reviews/");
+    return data?.results || data || [];
+  } catch (error) {
+    console.error("Error fetching reviews:", error);
+    return [];
+  }
 }
 
 export async function getReviewsByProduct(productId) {
   if (!productId) throw new Error("Product ID is required");
-  const data = await request(`/api/reviews/?product=${productId}`);
-  return data?.results ?? data ?? [];
+  try {
+    const data = await request(`/api/reviews/?product=${productId}`);
+    return data?.results || data || [];
+  } catch (error) {
+    console.error(`Error fetching reviews for product ${productId}:`, error);
+    return [];
+  }
 }
 
 export async function getReviewStats() {
