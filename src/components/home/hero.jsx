@@ -36,7 +36,7 @@ const Hero = () => {
             {/* Badge */}
             <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-50 to-yellow-50 px-4 py-2 rounded-full border border-purple-100">
               <div className="h-2 w-2 bg-brand-yellow rounded-full animate-pulse"></div>
-              <span className="text-sm font-medium text-brand-purple">Premium Software Solutions</span>
+              <span className="text-sm font-medium text-brand-purple">Premium Tools Subscriptions</span>
             </div>
 
             {/* Main Heading */}
@@ -44,7 +44,7 @@ const Hero = () => {
               Premium Digital
               <span className="block">
                 <span className="relative">
-                  <span className="relative z-10">Software Tools</span>
+                  <span className="relative z-10">Tools Subscription</span>
                   <span className="absolute bottom-2 left-0 w-full h-3 bg-brand-yellow opacity-30 -rotate-1"></span>
                 </span>
               </span>
@@ -52,7 +52,7 @@ const Hero = () => {
 
             {/* Description */}
             <p className="text-lg text-gray-600 max-w-lg">
-              Discover cutting-edge software tools, premium digital products, 
+              Discover cutting-edge software tools, Subscriptions, premium digital products, 
               and expert solutions. Everything you need to boost your productivity 
               and business growth.
             </p>
@@ -63,15 +63,11 @@ const Hero = () => {
                 to="/products"
                 className="group relative bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-2xl hover:shadow-purple-200 transition-all duration-300 inline-flex items-center justify-center"
               >
-                <span>Browse Software</span>
+                <span>Browse Tools</span>
                 <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
                 <div className="absolute -inset-1 bg-gradient-to-r from-brand-purple to-brand-purple-light rounded-xl blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
               </Link>
               
-              <button className="group inline-flex items-center justify-center px-8 py-4 rounded-xl border-2 border-gray-300 hover:border-brand-purple hover:text-brand-purple transition-all duration-300">
-                <Play className="w-5 h-5 mr-2" />
-                <span>View Demo</span>
-              </button>
             </div>
 
             {/* Features */}
@@ -102,7 +98,7 @@ const Hero = () => {
               <div className="flex items-center space-x-8">
                 <div className="text-center">
                   <div className="text-3xl font-bold text-brand-purple">1000+</div>
-                  <div className="text-sm text-gray-600">Software Sold</div>
+                  <div className="text-sm text-gray-600">Subscriptios Sold</div>
                 </div>
                 <div className="h-8 w-px bg-gray-300"></div>
                 <div className="text-center">
@@ -126,10 +122,10 @@ const Hero = () => {
               <div className="relative p-8">
                 <div className="text-white mb-6">
                   <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 mb-4">
-                    <span className="text-sm">Featured Software</span>
+                    <span className="text-sm">Featured Tools</span>
                   </div>
                   <h3 className="text-2xl font-bold mb-2">Bunny Pro Suite</h3>
-                  <p className="text-purple-200">Complete software bundle for maximum productivity</p>
+                  <p className="text-purple-200">Complete Subscripitions bundle for maximum productivity</p>
                 </div>
                 
                 {/* Software Features */}
@@ -174,7 +170,7 @@ const Hero = () => {
                 </div>
                 <div>
                   <div className="font-semibold text-gray-900">Instant Download</div>
-                  <div className="text-sm text-gray-600">Get software immediately</div>
+                  <div className="text-sm text-gray-600">Get Access immediately</div>
                 </div>
               </div>
             </div>

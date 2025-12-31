@@ -98,10 +98,10 @@ const HomePage = () => {
               <span className="text-sm font-medium text-brand-purple">Premium Collection</span>
             </div>
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
-              Featured <span className="gradient-text">Software Tools</span>
+              Featured <span className="gradient-text">Tools Subscription</span>
             </h2>
             <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Handpicked premium software solutions that deliver exceptional results
+              Handpicked premium Subscription solutions that deliver exceptional results
             </p>
           </div>
 
@@ -128,7 +128,7 @@ const HomePage = () => {
                   to="/products" 
                   className="inline-flex items-center bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-8 py-4 rounded-xl font-bold text-lg hover:shadow-xl hover:shadow-purple-200 transition-all"
                 >
-                  <span>View All Software</span>
+                  <span>View All Subscriptions</span>
                   <span className="ml-2">→</span>
                 </Link>
               </div>
@@ -206,7 +206,7 @@ const HomePage = () => {
                 to="/products"
                 className="group relative bg-gradient-to-r from-brand-purple to-purple-600 text-white px-10 py-4 rounded-xl font-bold text-lg hover:shadow-xl transition-all duration-300 inline-flex items-center justify-center"
               >
-                <span>Browse All Software</span>
+                <span>Browse All Subscriptions</span>
                 <span className="ml-2 group-hover:translate-x-1 transition-transform">→</span>
               </Link>
               
@@ -220,7 +220,7 @@ const HomePage = () => {
             
             <div className="flex items-center justify-center mt-8 text-sm text-gray-500">
               <Clock className="w-4 h-4 mr-2" />
-              <span>All software come with 30-day money-back guarantee</span>
+              <span>All Tools come with 30-day money-back guarantee</span>
             </div>
           </div>
         </div>
