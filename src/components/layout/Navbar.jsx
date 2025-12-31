@@ -1,7 +1,7 @@
 // src/components/layout/Navbar.jsx
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, MessageCircle, ChevronDown } from 'lucide-react';
+import { Menu, X, MessageCircle, ChevronDown, Star, Users } from 'lucide-react';
 import { getCategories, getWhatsAppNumber } from '../../api/api';
 
 const Navbar = () => {
@@ -42,6 +42,7 @@ const Navbar = () => {
   const navLinks = [
     { name: 'Home', path: '/' },
     { name: 'Tools', path: '/products' },
+    { name: 'Reviews', path: '/reviews' }, // Added Reviews link
     { name: 'About', path: '/about' },
   ];
 
@@ -60,6 +61,19 @@ const Navbar = () => {
       window.gtag('event', 'whatsapp_navbar_click', {
         'event_category': 'engagement',
         'event_label': 'navbar_whatsapp_button'
+      });
+    }
+  };
+
+  const handleCommunityClick = () => {
+    const communityUrl = 'https://chat.whatsapp.com/EJeZt7XL9T3Lt6L9lAJE6k';
+    window.open(communityUrl, '_blank');
+    
+    // Optional: Track click event
+    if (window.gtag) {
+      window.gtag('event', 'community_click', {
+        'event_category': 'engagement',
+        'event_label': 'whatsapp_community'
       });
     }
   };
@@ -103,12 +117,15 @@ const Navbar = () => {
               <Link
                 key={link.name}
                 to={link.path}
-                className={`relative font-medium transition-colors duration-200 ${
+                className={`relative font-medium transition-colors duration-200 flex items-center ${
                   location.pathname === link.path
                     ? 'text-brand-purple'
                     : 'text-gray-700 hover:text-brand-purple'
                 }`}
               >
+                {link.name === 'Reviews' && (
+                  <Star className="w-4 h-4 mr-2" />
+                )}
                 {link.name}
                 {location.pathname === link.path && (
                   <span className="absolute -bottom-1 left-0 w-full h-0.5 bg-orange-500 rounded-full"></span>
@@ -116,31 +133,15 @@ const Navbar = () => {
               </Link>
             ))}
             
-            {/* Software Categories Dropdown */}
-            {categories.length > 0 && (
-              <div className="relative group">
-                <button className="flex items-center space-x-1 text-gray-700 hover:text-brand-purple font-medium">
-                  <span>Software Types</span>
-                  <ChevronDown className="w-4 h-4" />
-                </button>
-                <div className="absolute left-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 transform translate-y-2 group-hover:translate-y-0">
-                  <div className="p-2">
-                    {categories.map((category) => (
-                      <Link
-                        key={category.id}
-                        to={`/products?category=${category.id}`}
-                        className="flex items-center justify-between px-4 py-3 rounded-lg hover:bg-purple-50 transition-colors"
-                      >
-                        <span className="text-gray-700">{category.name}</span>
-                        <span className="text-xs px-2 py-1 bg-purple-100 text-brand-purple rounded-full">
-                          {category.product_count || 0}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              </div>
-            )}
+            {/* Our Team Button - WhatsApp Community */}
+            <button
+              onClick={handleCommunityClick}
+              className="group relative flex items-center space-x-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:shadow-lg hover:shadow-blue-200 transition-all duration-300"
+            >
+              <Users className="w-4 h-4" />
+              <span>Our Team</span>
+              <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg blur opacity-20 group-hover:opacity-30 transition-opacity"></div>
+            </button>
           </div>
 
           {/* Action Buttons - Order on WhatsApp only */}
@@ -184,34 +185,30 @@ const Navbar = () => {
                   key={link.name}
                   to={link.path}
                   onClick={() => setIsOpen(false)}
-                  className={`px-4 py-2 rounded-lg font-medium ${
+                  className={`px-4 py-2 rounded-lg font-medium flex items-center ${
                     location.pathname === link.path
                       ? 'bg-purple-50 text-brand-purple'
                       : 'text-gray-700 hover:bg-gray-50'
                   }`}
                 >
+                  {link.name === 'Reviews' && (
+                    <Star className="w-4 h-4 mr-2" />
+                  )}
                   {link.name}
                 </Link>
               ))}
               
-              {/* Software Categories in Mobile */}
-              {categories.length > 0 && (
-                <div className="px-4 py-2">
-                  <h3 className="text-sm font-semibold text-gray-900 mb-2">Tools Types</h3>
-                  <div className="space-y-2">
-                    {categories.slice(0, 3).map((category) => (
-                      <Link
-                        key={category.id}
-                        to={`/products?category=${category.id}`}
-                        onClick={() => setIsOpen(false)}
-                        className="block px-4 py-2 rounded-lg text-gray-700 hover:bg-purple-50"
-                      >
-                        {category.name}
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              )}
+              {/* Our Team Button - Mobile */}
+              <button
+                onClick={() => {
+                  handleCommunityClick();
+                  setIsOpen(false);
+                }}
+                className="flex items-center justify-center space-x-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-3 rounded-lg font-medium mt-2"
+              >
+                <Users className="w-4 h-4" />
+                <span>Our Team (Community)</span>
+              </button>
               
               {/* WhatsApp Order Button for Mobile */}
               {whatsappNumber ? (

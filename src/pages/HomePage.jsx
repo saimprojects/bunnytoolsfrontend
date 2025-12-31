@@ -79,7 +79,7 @@ const HomePage = () => {
   ];
 
   const stats = [
-    { value: "1000+", label: "Software Sold" },
+    { value: "1000+", label: "Happy Customer" },
     { value: "50+", label: "Premium Tools" },
     { value: "98%", label: "Satisfaction Rate" },
     { value: "24/7", label: "Support" }

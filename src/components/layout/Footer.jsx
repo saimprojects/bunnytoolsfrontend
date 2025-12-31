@@ -57,9 +57,7 @@ const Footer = () => {
       { name: 'Contact', href: '/contact' },
     ],
     'Support': [
-      { name: 'Help Center', href: '/help' },
       { name: 'WhatsApp Support', href: '/contact' },
-      { name: 'License FAQ', href: '/faq' },
     ]
   };
 
