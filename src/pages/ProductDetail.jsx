@@ -267,7 +267,7 @@ const ProductDetail = () => {
                 </span>
               </div>
               <span className="px-3 py-1 bg-green-100 text-green-600 text-sm font-medium rounded-full">
-                {product.downloads || 1250}+ Downloads
+                {product.downloads || 1250}+ Orders
               </span>
             </div>
 

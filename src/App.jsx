@@ -15,6 +15,7 @@ import SoftwareSolutionsPage from './pages/SoftwareSolutionsPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import NotFound from './pages/NotFound';
+import ReviewsPage from './pages/ReviewsPage'; // Import ReviewsPage
 
 // Providers
 import { ProductsProvider } from './context/ProductsContext';
@@ -49,6 +50,7 @@ function App() {
                   <Route path="/solutions" element={<SoftwareSolutionsPage />} />
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/contact" element={<ContactPage />} />
+                  <Route path="/reviews" element={<ReviewsPage />} /> {/* Add this line */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </RouteWrapper>

@@ -132,3 +132,31 @@ export async function getWhatsAppNumber() {
   const data = await request("/api/whatsapp/");
   return data?.whatsapp_number || null;
 }
+
+// api.js - Existing code ke saath add karein
+
+/* =========================
+   REVIEWS API METHODS
+   ========================= */
+
+export async function getReviews() {
+  const data = await request("/api/reviews/");
+  return data?.results ?? data ?? [];
+}
+
+export async function getReviewsByProduct(productId) {
+  if (!productId) throw new Error("Product ID is required");
+  const data = await request(`/api/reviews/?product=${productId}`);
+  return data?.results ?? data ?? [];
+}
+
+export async function getReviewStats() {
+  // Agar aapke paas review stats ka alag endpoint hai
+  try {
+    const data = await request("/api/review-stats/");
+    return data;
+  } catch (error) {
+    console.warn("Review stats endpoint not available:", error.message);
+    return null;
+  }
+}
