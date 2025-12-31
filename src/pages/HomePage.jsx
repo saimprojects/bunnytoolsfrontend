@@ -1,7 +1,7 @@
 // src/pages/HomePage.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import Hero from '../components/home/Hero';
+import Hero from '../components/home/hero';
 import ProductCard from '../components/products/ProductCard';
 import Testimonials from '../components/home/Testimonials';
 import { getProducts } from '../api/api';
