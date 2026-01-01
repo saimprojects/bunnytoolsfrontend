@@ -38,7 +38,7 @@ const WhatsAppButton = () => {
   };
 
   const handleClick = () => {
-    const message = encodeURIComponent("Hello Digital Buddy! I'm interested in your products.");
+    const message = encodeURIComponent("Hello Bunny Tools! I'm interested in your products.");
     const url = `https://wa.me/${whatsappNumber.replace('+', '')}?text=${message}`;
     window.open(url, '_blank');
     
@@ -87,7 +87,7 @@ const WhatsAppButton = () => {
           onClick={() => window.open(`tel:${whatsappNumber}`, '_self')}
           className="bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2 w-full"
         >
-          <span>Call Now</span>
+          <span>Chat Now</span>
         </button>
       </div>
     </div>
