@@ -16,6 +16,7 @@ import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import NotFound from './pages/NotFound';
 import ReviewsPage from './pages/ReviewPage';
+import RefundPolicy from './pages/RefundPolicy';
 
 // Providers
 import { ProductsProvider } from './context/ProductsContext';
@@ -51,6 +52,7 @@ function App() {
                   <Route path="/about" element={<AboutPage />} />
                   <Route path="/contact" element={<ContactPage />} />
                   <Route path="/reviews" element={<ReviewsPage />} /> {/* Add this line */}
+                  <Route path="/refund-policy" element={<RefundPolicy />} />
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </RouteWrapper>

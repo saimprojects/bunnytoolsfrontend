@@ -16,7 +16,11 @@ import {
   Database,
   Palette,
   Smartphone,
-  CheckCircle
+  CheckCircle,
+  FileText,
+  ShoppingBag,
+  Users,
+  HelpCircle
 } from 'lucide-react';
 import { getWhatsAppNumber } from '../../api/api';
 
@@ -36,7 +40,7 @@ const Footer = () => {
       setWhatsappNumber(number);
     } catch (error) {
       console.error('Error fetching WhatsApp number:', error);
-      setWhatsappNumber('+923001234567'); // Fallback
+      setWhatsappNumber('+923446969962'); // Fallback to your number
     } finally {
       setLoading(false);
     }
@@ -52,12 +56,13 @@ const Footer = () => {
   const footerLinks = {
     'Categories': softwareCategories,
     'Company': [
-      { name: 'About Us', href: '/about' },
-      { name: 'Our Software', href: '/products' },
-      { name: 'Contact', href: '/contact' },
+      { name: 'About Us', href: '/about', icon: Users },
+      { name: 'Our Products', href: '/products', icon: ShoppingBag },
+      { name: 'Contact Us', href: '/contact', icon: MessageCircle },
     ],
-    'Support': [
-      { name: 'WhatsApp Support', href: '/contact' },
+    'Legal': [
+      { name: 'Refund Policy', href: '/refund-policy', icon: FileText },
+      { name: 'FAQ & Help', href: '/faq', icon: HelpCircle },
     ]
   };
 
@@ -72,22 +77,22 @@ const Footer = () => {
     {
       icon: Download,
       title: 'Instant Delivery',
-      description: 'Get Subscription immediately'
+      description: 'Get Access Immediately'
     },
     {
       icon: Shield,
-      title: 'Lifetime License',
-      description: 'One-time payment'
+      title: '24/7 Support',
+      description: 'Always Available'
     },
     {
       icon: Zap,
-      title: '24/7 Support',
-      description: 'Always available'
+      title: 'Premium Quality',
+      description: 'Verified Products'
     },
     {
       icon: Clock,
-      title: 'Free Updates',
-      description: 'Lifetime updates'
+      title: 'Lifetime Updates',
+      description: 'Free Updates Included'
     }
   ];
 
@@ -97,7 +102,7 @@ const Footer = () => {
       return;
     }
 
-    const message = encodeURIComponent("Hello Bunny Tools! I need help with subscription selection.");
+    const message = encodeURIComponent("Hello Bunny Tools! I need help with product selection.");
     const url = `https://wa.me/${whatsappNumber.replace('+', '')}?text=${message}`;
     window.open(url, '_blank');
   };
@@ -112,21 +117,18 @@ const Footer = () => {
           {/* Brand Column */}
           <div className="lg:col-span-2">
             <Link to="/" className="flex items-center space-x-3 mb-6 group">
-              {/* <div className="h-14 w-14 bg-gradient-to-br from-orange-500 to-yellow-500 rounded-xl flex items-center justify-center group-hover:shadow-lg transition-shadow">
-                <span className="text-2xl"></span>
-              </div> */}
               <div>
                 <h2 className="text-2xl font-bold">
                   <span className="text-orange-400">Bunny</span>
                   <span className="text-white">Tools</span>
                 </h2>
-                <p className="text-gray-400 text-sm">Premium Subscriptions Solutions</p>
+                <p className="text-gray-400 text-sm">Premium Digital Products Provider</p>
               </div>
             </Link>
             
             <p className="text-gray-400 mb-8 max-w-md">
-              Your trusted source for premium digital tools. We provide 
-              high-quality solutions that boost productivity and streamline workflows.
+              Your trusted source for premium digital tools and subscriptions. 
+              We provide high-quality solutions that boost productivity and streamline workflows.
             </p>
             
             {/* WhatsApp Contact Section */}
@@ -220,19 +222,8 @@ const Footer = () => {
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div>
               <h3 className="text-xl font-bold text-white mb-2">Stay Updated</h3>
-              <p className="text-gray-400">Get notified about new Subscriptions releases and updates</p>
+              <p className="text-gray-400">Get notified about new product releases and special offers</p>
             </div>
-            {/* <div className="flex w-full md:w-auto">
-              <input
-                type="email"
-                placeholder="Your email address"
-                className="flex-1 px-4 py-3 bg-gray-900 border border-gray-700 rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent text-white"
-              />
-              <button className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-3 rounded-r-lg font-semibold hover:shadow-lg transition-shadow flex items-center">
-                <Send className="w-4 h-4 mr-2" />
-                Subscribe
-              </button>
-            </div> */}
           </div>
         </div>
 
@@ -248,22 +239,22 @@ const Footer = () => {
             
             <div className="flex items-center space-x-6">
               <div className="flex items-center space-x-2">
-                <span className="text-gray-400 text-sm">Secure Payments:</span>
+                <span className="text-gray-400 text-sm">Payment Methods:</span>
                 <div className="flex space-x-2">
-                  <div className="h-6 w-10 bg-gray-800 rounded"></div>
-                  <div className="h-6 w-10 bg-gray-800 rounded"></div>
-                  <div className="h-6 w-10 bg-gray-800 rounded"></div>
+                  <div className="h-6 w-10 bg-gray-800 rounded flex items-center justify-center text-xs">Bank</div>
+                  <div className="h-6 w-10 bg-gray-800 rounded flex items-center justify-center text-xs">Jazz</div>
+                  <div className="h-6 w-10 bg-gray-800 rounded flex items-center justify-center text-xs">Cash</div>
                 </div>
               </div>
               
-              <div className="flex items-center space-x-4">
-                <Link to="/privacy" className="text-gray-400 text-sm hover:text-orange-400">
-                  Privacy Policy
-                </Link>
-                <Link to="/terms" className="text-gray-400 text-sm hover:text-orange-400">
-                  Terms of Service
-                </Link>
-              </div>
+              {/* Refund Policy Link - Prominent */}
+              <Link 
+                to="/refund-policy" 
+                className="bg-gradient-to-r from-orange-500/20 to-orange-600/20 border border-orange-500/30 text-orange-400 text-sm px-4 py-2 rounded-lg hover:bg-orange-500/30 hover:border-orange-400 transition-all flex items-center"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Refund Policy
+              </Link>
             </div>
           </div>
           
@@ -275,11 +266,11 @@ const Footer = () => {
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-400">100%</div>
-              <div className="text-xs text-gray-400">Secure</div>
+              <div className="text-xs text-gray-400">Verified</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-400">30-Day</div>
-              <div className="text-xs text-gray-400">Refund</div>
+              <div className="text-xs text-gray-400">Refund Policy</div>
             </div>
             <div className="text-center">
               <div className="text-2xl font-bold text-orange-400">Free</div>
@@ -291,13 +282,33 @@ const Footer = () => {
         {/* Final Note */}
         <div className="mt-8 text-center">
           <p className="text-gray-500 text-sm">
-            Bunny Tools is a premium software provider. All software comes with 
-            lifetime license and free updates. Instant digital delivery.
+            Bunny Tools is a premium digital products provider. All products come with 
+            lifetime access and free updates. Instant digital delivery.
           </p>
-          <div className="mt-4">
+          
+          {/* Refund Policy Notice */}
+          <div className="mt-4 bg-gray-800/50 rounded-lg p-4 max-w-2xl mx-auto">
+            <div className="flex items-center justify-center gap-2 mb-2">
+              <Shield className="w-4 h-4 text-orange-400" />
+              <span className="text-orange-400 font-medium">Refund Policy:</span>
+            </div>
+            <p className="text-gray-400 text-sm">
+              Digital products are final sale. Refunds only issued if product access doesn't work 
+              and our team cannot fix it. Requests must be made within 3 days of purchase.
+            </p>
+            <Link 
+              to="/refund-policy" 
+              className="inline-flex items-center text-orange-400 hover:text-orange-300 text-sm font-medium mt-2"
+            >
+              Read full refund policy
+            </Link>
+          </div>
+          
+          {/* WhatsApp CTA */}
+          <div className="mt-6">
             <button
               onClick={handleWhatsAppClick}
-              className="inline-flex items-center text-orange-400 hover:text-orange-300 font-medium"
+              className="inline-flex items-center text-orange-400 hover:text-orange-300 font-medium text-sm"
             >
               <MessageCircle className="w-4 h-4 mr-2" />
               Need help? Click to chat on WhatsApp
