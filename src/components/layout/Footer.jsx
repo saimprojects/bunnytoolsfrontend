@@ -62,7 +62,6 @@ const Footer = () => {
     ],
     'Legal': [
       { name: 'Refund Policy', href: '/refund-policy', icon: FileText },
-      { name: 'FAQ & Help', href: '/faq', icon: HelpCircle },
     ]
   };
 
