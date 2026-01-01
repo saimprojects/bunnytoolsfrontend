@@ -86,16 +86,6 @@ const Hero = () => {
 🚀 *Key Features:*
 ${bunnyProSuite.features.map(feature => `✅ ${feature}`).join('\n')}
 
-👤 *My Information:*
-Name: [Please enter your name]
-Email: [Please enter your email]
-Phone: [Please enter your phone]
-
-💳 *Payment Preference:*
-[UPI / Bank Transfer / Other]
-
-❓ *Additional Requirements:*
-[Any specific customization or requirements]
 
 ━━━━━━━━━━━━━━━━━━━━━━
 📞 *Contact Information:*
