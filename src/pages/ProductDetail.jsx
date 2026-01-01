@@ -17,121 +17,108 @@ import ProductCard from '../components/products/ProductCard';
 import { getProductById, getWhatsAppNumber } from '../api/api';
 import { useProducts } from '../api/hooks/useProducts';
 
-// Helper function to decode plan code with better error handling
+// Helper function to decode plan code with new system (100 = day, 200 = year)
 const decodePlanCode = (code) => {
-  console.log('Received code for decoding:', code);
+  console.log('🔍 Decoding plan code:', code);
   
-  if (!code) {
-    console.log('No code provided');
+  if (!code && code !== 0) {
+    console.log('❌ No code provided');
     return null;
   }
   
-  // Convert to string if it's a number
-  const codeStr = code.toString();
-  console.log('Code as string:', codeStr);
+  // Convert to string for processing
+  const codeStr = code.toString().trim();
+  console.log('📝 Code as string:', codeStr);
   
-  // If code is simple number (like 3), treat as months
+  // Check length to determine format
   if (codeStr.length < 3) {
+    // Simple number like 3, 6, 12 (months)
     const months = parseInt(codeStr, 10);
-    console.log('Treating as months:', months);
+    if (isNaN(months) || months <= 0) {
+      console.log('⚠️ Invalid months, defaulting to 1 month');
+      return {
+        type: 'Monthly',
+        unit: 'month',
+        quantity: 1
+      };
+    }
+    
+    console.log(`✅ Treating as months: ${months}`);
     return {
       type: 'Monthly',
       unit: 'month',
-      quantity: isNaN(months) ? 1 : months
+      quantity: months
     };
   }
   
-  // Check if it's our coded format (00130, 0021, etc)
-  if (codeStr.length < 5) {
-    // Could be 0021 (yearly) or 00130 (daily) - check first 3 chars
-    const typeCode = codeStr.substring(0, 3);
-    let quantityStr = codeStr.substring(3);
-    
-    // If quantityStr is empty or invalid, set to 1
-    if (!quantityStr || isNaN(parseInt(quantityStr, 10))) {
-      quantityStr = '1';
-    }
-    
+  // Check if it starts with 100 (daily) or 200 (yearly)
+  if (codeStr.startsWith('100')) {
+    // Daily plan format: 10030 = 30 days
+    const quantityStr = codeStr.substring(3); // Remove '100'
     const quantity = parseInt(quantityStr, 10);
     
-    let type = '';
-    let unit = '';
-    
-    switch(typeCode) {
-      case '001':
-        type = 'Daily';
-        unit = 'day';
-        break;
-      case '002':
-        type = 'Yearly';
-        unit = 'year';
-        break;
-      case '003':
-        type = 'Monthly';
-        unit = 'month';
-        break;
-      default:
-        // Check if it starts with numbers
-        if (!isNaN(parseInt(typeCode, 10))) {
-          // It's probably a simple duration in months
-          const allNumber = parseInt(codeStr, 10);
-          return {
-            type: 'Monthly',
-            unit: 'month',
-            quantity: isNaN(allNumber) ? 1 : allNumber
-          };
-        }
-        type = 'Custom';
-        unit = 'period';
+    if (isNaN(quantity) || quantity <= 0) {
+      console.log('⚠️ Invalid daily quantity, defaulting to 30 days');
+      return {
+        type: 'Daily',
+        unit: 'day',
+        quantity: 30
+      };
     }
     
-    console.log(`Decoded ${typeCode}${quantityStr}: ${quantity} ${unit}`);
-    
+    console.log(`✅ Daily plan: ${quantity} days`);
     return {
-      type,
-      unit,
-      quantity: isNaN(quantity) ? 1 : quantity,
-      fullCode: codeStr
+      type: 'Daily',
+      unit: 'day',
+      quantity: quantity
     };
   }
   
-  // If longer than needed, extract relevant parts
-  const typeCode = codeStr.substring(0, 3);
-  const quantityStr = codeStr.substring(3);
-  const quantity = parseInt(quantityStr, 10);
-  
-  let type = '';
-  let unit = '';
-  
-  switch(typeCode) {
-    case '001':
-      type = 'Daily';
-      unit = 'day';
-      break;
-    case '002':
-      type = 'Yearly';
-      unit = 'year';
-      break;
-    case '003':
-    default:
-      type = 'Monthly';
-      unit = 'month';
-      break;
+  if (codeStr.startsWith('200')) {
+    // Yearly plan format: 2001 = 1 year
+    const quantityStr = codeStr.substring(3); // Remove '200'
+    const quantity = parseInt(quantityStr, 10);
+    
+    if (isNaN(quantity) || quantity <= 0) {
+      console.log('⚠️ Invalid yearly quantity, defaulting to 1 year');
+      return {
+        type: 'Yearly',
+        unit: 'year',
+        quantity: 1
+      };
+    }
+    
+    console.log(`✅ Yearly plan: ${quantity} year(s)`);
+    return {
+      type: 'Yearly',
+      unit: 'year',
+      quantity: quantity
+    };
   }
   
-  console.log(`Final decoded: ${type} - ${quantity} ${unit}`);
+  // If it's a 3-digit number but not 100/200, treat as months
+  const allNumber = parseInt(codeStr, 10);
+  if (!isNaN(allNumber) && allNumber > 0) {
+    console.log(`✅ Treating as months (fallback): ${allNumber} months`);
+    return {
+      type: 'Monthly',
+      unit: 'month',
+      quantity: allNumber
+    };
+  }
   
+  // Default fallback
+  console.log('⚠️ Could not decode, using default 1 month');
   return {
-    type,
-    unit,
-    quantity: isNaN(quantity) ? 1 : quantity,
-    fullCode: codeStr
+    type: 'Monthly',
+    unit: 'month',
+    quantity: 1
   };
 };
 
 // Format plan display text
 const formatPlanDisplay = (plan) => {
-  console.log('Formatting plan:', plan);
+  console.log('📊 Formatting plan:', plan);
   
   if (!plan) {
     return {
@@ -142,29 +129,32 @@ const formatPlanDisplay = (plan) => {
     };
   }
   
-  // Try to get duration from multiple possible fields
-  let decoded;
+  // Check multiple possible duration fields
+  let durationValue = null;
   
-  if (plan.duration_code) {
-    console.log('Using duration_code:', plan.duration_code);
-    decoded = decodePlanCode(plan.duration_code);
-  } else if (plan.duration) {
-    console.log('Using duration field:', plan.duration);
-    decoded = decodePlanCode(plan.duration);
-  } else if (plan.duration_months) {
-    console.log('Using duration_months:', plan.duration_months);
+  if (plan.duration_code !== undefined && plan.duration_code !== null) {
+    console.log('📌 Using duration_code:', plan.duration_code);
+    durationValue = plan.duration_code;
+  } else if (plan.duration !== undefined && plan.duration !== null) {
+    console.log('📌 Using duration field:', plan.duration);
+    durationValue = plan.duration;
+  } else if (plan.duration_months !== undefined && plan.duration_months !== null) {
+    console.log('📌 Using duration_months:', plan.duration_months);
+    durationValue = plan.duration_months;
+  } else {
+    console.log('❌ No duration info found in plan');
     return {
-      displayText: `${plan.duration_months} month${plan.duration_months > 1 ? 's' : ''}`,
+      displayText: '1 month',
       isDaily: false,
       isYearly: false,
-      quantity: plan.duration_months
+      quantity: 1
     };
-  } else if (plan.decodedInfo) {
-    decoded = plan.decodedInfo;
   }
   
+  const decoded = decodePlanCode(durationValue);
+  
   if (!decoded) {
-    console.log('No duration info found, using default');
+    console.log('❌ Failed to decode');
     return {
       displayText: '1 month',
       isDaily: false,
@@ -174,17 +164,15 @@ const formatPlanDisplay = (plan) => {
   }
   
   const { type, unit, quantity } = decoded;
-  const validQuantity = isNaN(quantity) ? 1 : quantity;
+  const displayText = `${quantity} ${unit}${quantity > 1 ? 's' : ''}`;
   
-  const displayText = `${validQuantity} ${unit}${validQuantity > 1 ? 's' : ''}`;
-  
-  console.log(`Formatted: ${displayText}`);
+  console.log(`✅ Formatted: ${displayText} (${type})`);
   
   return {
     displayText,
     isDaily: type === 'Daily',
     isYearly: type === 'Yearly',
-    quantity: validQuantity
+    quantity: quantity
   };
 };
 
@@ -228,29 +216,28 @@ const ProductDetail = () => {
       setError(null);
       const data = await getProductById(id);
       
-      console.log('Full product data from backend:', data);
+      console.log('🔄 Full product data from backend:', data);
       
       // Decode plan codes for display
       if (data.plans && data.plans.length > 0) {
-        console.log('Processing plans:', data.plans);
+        console.log('📋 Processing plans:', data.plans);
         
         data.plans = data.plans.map((plan, index) => {
-          console.log(`Plan ${index + 1}:`, plan);
+          console.log(`\n📝 Plan ${index + 1}:`, {
+            id: plan.id,
+            title: plan.title,
+            price: plan.price,
+            duration_code: plan.duration_code,
+            duration: plan.duration,
+            duration_months: plan.duration_months
+          });
           
-          // Log all possible duration fields
-          console.log(`  - duration_code: ${plan.duration_code}`);
-          console.log(`  - duration: ${plan.duration}`);
-          console.log(`  - duration_months: ${plan.duration_months}`);
-          
-          const decoded = decodePlanCode(plan.duration_code || plan.duration);
           const displayInfo = formatPlanDisplay(plan);
           
-          console.log(`  - Decoded:`, decoded);
-          console.log(`  - Display:`, displayInfo);
+          console.log(`✅ Decoded display: ${displayInfo.displayText}`);
           
           return {
             ...plan,
-            decodedInfo: decoded,
             displayInfo: displayInfo
           };
         });
@@ -258,7 +245,7 @@ const ProductDetail = () => {
       
       setProduct(data);
     } catch (err) {
-      console.error('Error fetching product:', err);
+      console.error('❌ Error fetching product:', err);
       setError(err.message || 'Product not found');
     } finally {
       setLoading(false);
@@ -337,10 +324,14 @@ const ProductDetail = () => {
     
     if (displayInfo.isDaily) return Zap;
     if (displayInfo.isYearly) return Crown;
-    if (displayInfo.quantity === 1) return Calendar;
     
-    const icons = [Calendar, Zap, Crown];
-    return icons[index % icons.length];
+    return Calendar;
+  };
+
+  const getPlanColor = (displayInfo) => {
+    if (displayInfo.isDaily) return 'text-yellow-500';
+    if (displayInfo.isYearly) return 'text-purple-500';
+    return 'text-blue-500';
   };
 
   if (loading) {
@@ -479,12 +470,6 @@ const ProductDetail = () => {
                     const PlanIcon = getPlanIcon(index, plan);
                     const isSelected = selectedPlan?.id === plan.id;
                     
-                    console.log(`Rendering plan ${index}:`, {
-                      title: plan.title,
-                      displayInfo,
-                      isSelected
-                    });
-                    
                     return (
                       <div
                         key={plan.id}
@@ -503,12 +488,12 @@ const ProductDetail = () => {
                         
                         {/* Badge for special plans */}
                         {displayInfo.isDaily && (
-                          <div className="absolute -top-2 left-4 bg-yellow-500 text-white text-xs px-3 py-1 rounded-full">
+                          <div className="absolute -top-2 left-4 bg-yellow-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
                             Daily Plan
                           </div>
                         )}
                         {displayInfo.isYearly && (
-                          <div className="absolute -top-2 left-4 bg-purple-500 text-white text-xs px-3 py-1 rounded-full">
+                          <div className="absolute -top-2 left-4 bg-purple-500 text-white text-xs px-3 py-1 rounded-full font-semibold">
                             Yearly Plan
                           </div>
                         )}
@@ -516,10 +501,7 @@ const ProductDetail = () => {
                         <div className="flex items-start justify-between mb-4">
                           <div>
                             <div className="flex items-center mb-2">
-                              <PlanIcon className={`w-5 h-5 mr-2 ${
-                                displayInfo.isDaily ? 'text-yellow-500' :
-                                displayInfo.isYearly ? 'text-purple-500' : 'text-blue-500'
-                              }`} />
+                              <PlanIcon className={`w-5 h-5 mr-2 ${getPlanColor(displayInfo)}`} />
                               <h4 className="font-bold text-gray-900">{plan.title}</h4>
                             </div>
                             <div className="flex items-baseline">
