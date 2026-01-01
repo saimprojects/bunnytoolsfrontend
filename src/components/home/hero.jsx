@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Download, Shield, Zap, Cpu } from 'lucide-react';
-import { getWhatsAppNumber } from '../api/api'; // Import your WhatsApp API function
+import { getWhatsAppNumber } from '../../api/api'; // Import your WhatsApp API function
 
 const Hero = () => {
   const [currentFeature, setCurrentFeature] = useState(0);
