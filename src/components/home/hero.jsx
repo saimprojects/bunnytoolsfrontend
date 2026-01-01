@@ -2,9 +2,12 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Play, Download, Shield, Zap, Cpu } from 'lucide-react';
+import { getWhatsAppNumber } from '../api/api'; // Import your WhatsApp API function
 
 const Hero = () => {
   const [currentFeature, setCurrentFeature] = useState(0);
+  const [loadingWhatsapp, setLoadingWhatsapp] = useState(false);
+  const [whatsappNumber, setWhatsappNumber] = useState(null);
   
   const features = [
     { icon: Download, text: 'Instant Digital Delivery' },
@@ -19,12 +22,96 @@ const Hero = () => {
     'https://res.cloudinary.com/dxommxt6d/image/upload/v1767186255/fen2w8dlushcthzqnmtt.png'
   ];
 
+  // Product details for Bunny Pro Suite
+  const bunnyProSuite = {
+    title: 'Bunny Pro Suite',
+    description: 'Complete Subscriptions bundle for maximum productivity',
+    price: 999,
+    originalPrice: 1499,
+    discount: 30,
+    features: [
+      'AI-Powered Automation Tools',
+      'Advanced Analytics Dashboard',
+      'Unlimited Team Members',
+      'Priority Customer Support',
+      'Lifetime Updates & Upgrades'
+    ]
+  };
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFeature((prev) => (prev + 1) % features.length);
     }, 3000);
     return () => clearInterval(interval);
   }, []);
+
+  // Fetch WhatsApp number on component mount
+  useEffect(() => {
+    fetchWhatsappNumber();
+  }, []);
+
+  const fetchWhatsappNumber = async () => {
+    try {
+      const number = await getWhatsAppNumber();
+      setWhatsappNumber(number);
+    } catch (err) {
+      console.error('Error fetching WhatsApp number:', err);
+    }
+  };
+
+  const handleBunnySuitePurchase = async () => {
+    try {
+      setLoadingWhatsapp(true);
+      
+      let number = whatsappNumber;
+      
+      // If WhatsApp number is not loaded, fetch it
+      if (!number) {
+        number = await getWhatsAppNumber();
+        setWhatsappNumber(number);
+      }
+
+      const cleanNumber = number.replace('+', '');
+      
+      // Create a beautiful WhatsApp message template
+      const message = `✨ *BUNNY PRO SUITE - PURCHASE INQUIRY* ✨
+
+🎯 *Product Details:*
+📦 Product: ${bunnyProSuite.title}
+💎 Description: ${bunnyProSuite.description}
+💰 Price: Rs. ${bunnyProSuite.price}
+🎁 Discount: ${bunnyProSuite.discount}% OFF
+📊 Original Price: Rs. ${bunnyProSuite.originalPrice}
+
+🚀 *Key Features:*
+${bunnyProSuite.features.map(feature => `✅ ${feature}`).join('\n')}
+
+👤 *My Information:*
+Name: [Please enter your name]
+Email: [Please enter your email]
+Phone: [Please enter your phone]
+
+💳 *Payment Preference:*
+[UPI / Bank Transfer / Other]
+
+❓ *Additional Requirements:*
+[Any specific customization or requirements]
+
+━━━━━━━━━━━━━━━━━━━━━━
+📞 *Contact Information:*
+I'm ready to proceed with the purchase. Please share the payment details and next steps.
+
+Thank you! 🙏`;
+
+      const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+      
+      window.open(url, '_blank');
+    } catch (err) {
+      alert('Unable to contact WhatsApp. Please try again or contact support.');
+    } finally {
+      setLoadingWhatsapp(false);
+    }
+  };
 
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-white via-purple-50 to-white">
@@ -131,8 +218,8 @@ const Hero = () => {
                   <div className="inline-flex items-center px-3 py-1 rounded-full bg-white/20 mb-4">
                     <span className="text-sm">Featured Tools</span>
                   </div>
-                  <h3 className="text-2xl font-bold mb-2">Bunny Pro Suite</h3>
-                  <p className="text-purple-200">Complete Subscripitions bundle for maximum productivity</p>
+                  <h3 className="text-2xl font-bold mb-2">{bunnyProSuite.title}</h3>
+                  <p className="text-purple-200">{bunnyProSuite.description}</p>
                 </div>
                 
                 {/* Software Features with Images */}
@@ -152,13 +239,39 @@ const Hero = () => {
                     ))}
                   </div>
                   
+                  {/* Features List */}
+                  <div className="mb-6">
+                    <h4 className="text-white font-semibold mb-3">✨ Included Features:</h4>
+                    <ul className="space-y-2">
+                      {bunnyProSuite.features.slice(0, 3).map((feature, index) => (
+                        <li key={index} className="flex items-center text-sm text-purple-100">
+                          <div className="w-2 h-2 bg-brand-yellow rounded-full mr-3"></div>
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="text-2xl font-bold text-white">Rs. 999</div>
-                      <div className="text-sm text-purple-200 line-through">Rs. 899</div>
+                      <div className="text-2xl font-bold text-white">Rs. {bunnyProSuite.price}</div>
+                      <div className="text-sm text-purple-200 line-through">Rs. {bunnyProSuite.originalPrice}</div>
                     </div>
-                    <button className="bg-white text-brand-purple px-6 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
-                      Buy Now
+                    <button 
+                      onClick={handleBunnySuitePurchase}
+                      disabled={loadingWhatsapp}
+                      className={`bg-white text-brand-purple px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors flex items-center ${
+                        loadingWhatsapp ? 'opacity-70 cursor-not-allowed' : ''
+                      }`}
+                    >
+                      {loadingWhatsapp ? (
+                        <>
+                          <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-brand-purple mr-2"></div>
+                          Loading...
+                        </>
+                      ) : (
+                        'Buy Now'
+                      )}
                     </button>
                   </div>
                 </div>
@@ -168,7 +281,7 @@ const Hero = () => {
               <div className="absolute -top-4 -right-4 bg-brand-yellow text-white p-3 rounded-xl shadow-lg animate-bounce-slow">
                 <div className="text-center">
                   <div className="text-xs">SAVE</div>
-                  <div className="text-lg font-bold">30%</div>
+                  <div className="text-lg font-bold">{bunnyProSuite.discount}%</div>
                 </div>
               </div>
             </div>
