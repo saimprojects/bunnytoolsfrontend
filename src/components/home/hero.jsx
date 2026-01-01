@@ -12,6 +12,13 @@ const Hero = () => {
     { icon: Zap, text: '24/7 Premium Support' },
   ];
 
+  // Image URLs
+  const softwareImages = [
+    'https://res.cloudinary.com/dxommxt6d/image/upload/v1767184269/znxburenjudygfdmpzxw.webp',
+    'https://res.cloudinary.com/dxommxt6d/image/upload/v1767184555/zmrqvw7txeztmhimo7o4.webp',
+    'https://res.cloudinary.com/dxommxt6d/image/upload/v1767186255/fen2w8dlushcthzqnmtt.png'
+  ];
+
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFeature((prev) => (prev + 1) % features.length);
@@ -128,13 +135,17 @@ const Hero = () => {
                   <p className="text-purple-200">Complete Subscripitions bundle for maximum productivity</p>
                 </div>
                 
-                {/* Software Features */}
+                {/* Software Features with Images */}
                 <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-6">
                   <div className="grid grid-cols-3 gap-4 mb-6">
-                    {[1, 2, 3].map((i) => (
-                      <div key={i} className="bg-white/20 rounded-lg p-3">
-                        <div className="h-20 bg-white/30 rounded-lg mb-2 flex items-center justify-center">
-                          <Cpu className="w-8 h-8 text-white" />
+                    {softwareImages.map((imageUrl, index) => (
+                      <div key={index} className="bg-white/20 rounded-lg p-3">
+                        <div className="h-20 bg-white/30 rounded-lg mb-2 flex items-center justify-center overflow-hidden">
+                          <img 
+                            src={imageUrl} 
+                            alt={`Software feature ${index + 1}`}
+                            className="w-full h-full object-cover rounded-lg"
+                          />
                         </div>
                         <div className="h-2 bg-white/40 rounded w-3/4 mx-auto"></div>
                       </div>
