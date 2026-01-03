@@ -22,8 +22,6 @@ import ContactPage from "./pages/ContactPage";
 import NotFound from "./pages/NotFound";
 import ReviewsPage from "./pages/ReviewPage";
 import RefundPolicy from "./pages/RefundPolicy";
-import Sitemap from "./pages/Sitemap";
-import SitemapXML from "./pages/sitemap.xml";
 
 // Providers
 import { ProductsProvider } from "./context/ProductsContext";
@@ -66,8 +64,6 @@ function App() {
                     <Route path="/reviews" element={<ReviewsPage />} />
                     <Route path="/refund-policy" element={<RefundPolicy />} />
                     <Route path="*" element={<NotFound />} />
-                    <Route path="/sitemap" element={<Sitemap />} />
-                    <Route path="/sitemap.xml" element={<SitemapXML />} />
                   </Routes>
                 </RouteWrapper>
               </React.Suspense>
