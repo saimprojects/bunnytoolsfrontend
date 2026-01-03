@@ -1,4 +1,4 @@
-// src/pages/ProductDetail.jsx - Enhanced for Digital Products with Plans
+// 📁 src/pages/ProductDetail.jsx - Enhanced for Digital Products with Plans
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { 
@@ -14,8 +14,9 @@ import {
 import ImageGallery from '../components/products/ImageGallery';
 import ReviewList from '../components/products/ReviewList';
 import ProductCard from '../components/products/ProductCard';
-import { getProductById, getWhatsAppNumber } from '../api/api';
+import { getProductById } from '../api/api';
 import { useProducts } from '../api/hooks/useProducts';
+import { useWhatsApp } from '../context/WhatsAppContext';
 
 // Helper function to decode plan code with new system (100 = day, 200 = year)
 const decodePlanCode = (code) => {
@@ -183,14 +184,14 @@ const ProductDetail = () => {
   const [error, setError] = useState(null);
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [selectedPlan, setSelectedPlan] = useState(null);
-  const [whatsappNumber, setWhatsappNumber] = useState(null);
-  const [loadingWhatsapp, setLoadingWhatsapp] = useState(false);
-
+  
+  // Use WhatsApp context instead of local state
+  const { whatsappNumber, loading: loadingWhatsapp } = useWhatsApp();
   const { products: allProducts } = useProducts();
 
   useEffect(() => {
     fetchProduct();
-    fetchWhatsappNumber();
+    // REMOVED: fetchWhatsappNumber() - Now handled by context
   }, [id]);
 
   useEffect(() => {
@@ -252,67 +253,39 @@ const ProductDetail = () => {
     }
   };
 
-  const fetchWhatsappNumber = async () => {
-    try {
-      setLoadingWhatsapp(true);
-      const number = await getWhatsAppNumber();
-      setWhatsappNumber(number);
-    } catch (err) {
-      console.error('Error fetching WhatsApp number:', err);
-    } finally {
-      setLoadingWhatsapp(false);
-    }
-  };
+  // SIMPLIFIED: No more fetchWhatsappNumber function
 
-  const handlePurchase = async () => {
+  const handlePurchase = () => {
     if (!selectedPlan) {
       alert('Please select a plan first');
       return;
     }
 
-    try {
-      let number = whatsappNumber;
-      
-      // If WhatsApp number is not loaded, fetch it
-      if (!number) {
-        setLoadingWhatsapp(true);
-        number = await getWhatsAppNumber();
-        setWhatsappNumber(number);
-      }
-
-      const cleanNumber = number.replace('+', '');
-      const displayInfo = formatPlanDisplay(selectedPlan);
-      
-      const message = `Hello! I want to purchase this product:\n\n📦 *Product:* ${product.title}\n📋 *Selected Plan:* ${selectedPlan.title}\n💰 *Price:* Rs. ${selectedPlan.price}\n⏰ *Duration:* ${displayInfo.displayText}\n\nPlease provide me with payment details.`;
-      const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
-      
-      window.open(url, '_blank');
-    } catch (err) {
-      alert('Unable to contact WhatsApp. Please try again or contact support.');
-    } finally {
-      setLoadingWhatsapp(false);
+    // WhatsApp number is already loaded from context
+    if (!whatsappNumber) {
+      alert('WhatsApp service is temporarily unavailable. Please try again in a moment.');
+      return;
     }
+
+    const displayInfo = formatPlanDisplay(selectedPlan);
+    
+    const message = `Hello! I want to purchase this product:\n\n📦 *Product:* ${product.title}\n📋 *Selected Plan:* ${selectedPlan.title}\n💰 *Price:* Rs. ${selectedPlan.price}\n⏰ *Duration:* ${displayInfo.displayText}\n\nPlease provide me with payment details.`;
+    const cleanNumber = whatsappNumber.replace('+', '');
+    const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, '_blank');
   };
 
-  const handleContact = async () => {
-    try {
-      let number = whatsappNumber;
-      
-      if (!number) {
-        setLoadingWhatsapp(true);
-        number = await getWhatsAppNumber();
-        setWhatsappNumber(number);
-      }
-
-      const cleanNumber = number.replace('+', '');
-      const message = `Hello! I have a question about this product: ${product.title}`;
-      const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
-      window.open(url, '_blank');
-    } catch (err) {
-      alert('Unable to contact WhatsApp. Please try again.');
-    } finally {
-      setLoadingWhatsapp(false);
+  const handleContact = () => {
+    if (!whatsappNumber) {
+      alert('WhatsApp service is temporarily unavailable. Please try again in a moment.');
+      return;
     }
+
+    const message = `Hello! I have a question about this product: ${product.title}`;
+    const cleanNumber = whatsappNumber.replace('+', '');
+    const url = `https://wa.me/${cleanNumber}?text=${encodeURIComponent(message)}`;
+    window.open(url, '_blank');
   };
 
   const handlePlanSelect = (plan) => {
@@ -562,7 +535,7 @@ const ProductDetail = () => {
                       {loadingWhatsapp ? (
                         <>
                           <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                          Connecting...
+                          Loading...
                         </>
                       ) : (
                         `Buy Now - Rs. ${selectedPlan.price}`
