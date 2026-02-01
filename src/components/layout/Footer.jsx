@@ -66,10 +66,8 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
-    { icon: Youtube, href: '#', label: 'YouTube' },
+    { icon: Instagram, href: 'https://www.instagram.com/bunny_toolss?igsh=eG56bHBocmdiYzh0', label: 'Instagram' },
+    { icon: Facebook, href: 'https://www.facebook.com/Usmanecom3', label: 'Facebook' },
   ];
 
   const features = [

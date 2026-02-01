@@ -4,7 +4,7 @@ import { MessageCircle } from 'lucide-react';
 import { getWhatsAppNumber } from '../../api/api';
 
 const WhatsAppButton = () => {
-  const [whatsappNumber, setWhatsappNumber] = useState('+923001234567');
+  const [whatsappNumber, setWhatsappNumber] = useState('+923000000000');
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
