@@ -136,7 +136,7 @@ const RefundPolicy = () => {
                     <div>
                       <p className="text-sm text-gray-500">Email</p>
                       <a 
-                        href="mailto:Tesladigi@gmail.com" 
+                        href="mailto:usmanfrombunny@gmail.com" 
                         className="text-purple-600 hover:text-purple-700 font-medium"
                       >
                         usmanfrombunny@gmail.com
