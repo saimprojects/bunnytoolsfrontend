@@ -139,7 +139,7 @@ const RefundPolicy = () => {
                         href="mailto:Tesladigi@gmail.com" 
                         className="text-purple-600 hover:text-purple-700 font-medium"
                       >
-                        Tesladigi@gmail.com
+                        usmanfrombunny@gmail.com
                       </a>
                     </div>
                   </div>
