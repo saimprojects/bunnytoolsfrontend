@@ -582,7 +582,7 @@ const ReviewsPage = () => {
             )}
 
             {/* Write Review CTA */}
-            <div className="mt-12 bg-gradient-to-r from-brand-purple/10 to-blue-50 border border-purple-100 rounded-2xl p-8">
+            {/* <div className="mt-12 bg-gradient-to-r from-brand-purple/10 to-blue-50 border border-purple-100 rounded-2xl p-8">
               <div className="flex flex-col md:flex-row items-center justify-between">
                 <div>
                   <h3 className="text-2xl font-bold text-gray-900 mb-2">Share Your Experience</h3>
@@ -594,7 +594,7 @@ const ReviewsPage = () => {
                   Write a Review
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>
