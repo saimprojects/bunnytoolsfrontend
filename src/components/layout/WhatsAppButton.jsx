@@ -1,32 +1,33 @@
 // src/components/layout/WhatsAppButton.jsx
-import React, { useState, useEffect } from 'react';
-import { MessageCircle } from 'lucide-react';
+import React, { useEffect, useRef, useState } from 'react';
 import { getWhatsAppNumber } from '../../api/api';
+import { FaWhatsapp } from 'react-icons/fa';
 
 const WhatsAppButton = () => {
   const [whatsappNumber, setWhatsappNumber] = useState('+923000000000');
   const [isVisible, setIsVisible] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
+  const lastScrollYRef = useRef(0);
 
   useEffect(() => {
     fetchWhatsAppNumber();
-    
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-      
-      // Hide on scroll down, show on scroll up
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+
+      if (currentScrollY < 80) {
+        setIsVisible(true);
+      } else if (currentScrollY > lastScrollYRef.current) {
         setIsVisible(false);
       } else {
         setIsVisible(true);
       }
-      
-      setLastScrollY(currentScrollY);
+
+      lastScrollYRef.current = currentScrollY;
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [lastScrollY]);
+  }, []);
 
   const fetchWhatsAppNumber = async () => {
     try {
@@ -38,59 +39,108 @@ const WhatsAppButton = () => {
   };
 
   const handleClick = () => {
-    const message = encodeURIComponent("Hello Bunny Tools! I'm interested in your products.");
-    const url = `https://wa.me/${whatsappNumber.replace('+', '')}?text=${message}`;
+    const message = encodeURIComponent(
+      "Hello Bunny Tools! I'm interested in your products."
+    );
+    const cleanNumber = whatsappNumber.replace('+', '');
+    const url = `https://wa.me/${cleanNumber}?text=${message}`;
     window.open(url, '_blank');
-    
-    // Optional: Track click event
+
     if (window.gtag) {
       window.gtag('event', 'whatsapp_click', {
-        'event_category': 'engagement',
-        'event_label': 'whatsapp_button'
+        event_category: 'engagement',
+        event_label: 'whatsapp_button',
       });
     }
   };
 
   return (
-    <div className={`fixed bottom-6 right-6 z-50 transition-all duration-500 ${
-      isVisible ? 'translate-y-0 opacity-100' : 'translate-y-20 opacity-0'
-    }`}>
-      <div className="relative">
-        {/* Pulsing Ring Effect */}
-        <div className="absolute -inset-4 bg-green-500 rounded-full opacity-20 animate-ping"></div>
-        <div className="absolute -inset-2 bg-green-400 rounded-full opacity-30 animate-pulse"></div>
-        
-        {/* Main Button */}
+    <>
+      <style>{`
+        @keyframes wa-float-soft {
+          0%, 100% { transform: translateY(0); }
+          50% { transform: translateY(-5px); }
+        }
+
+        @keyframes wa-glow-soft {
+          0%, 100% {
+            box-shadow:
+              0 12px 30px rgba(37, 211, 102, 0.22),
+              0 0 0 0 rgba(37, 211, 102, 0);
+          }
+          50% {
+            box-shadow:
+              0 16px 36px rgba(37, 211, 102, 0.30),
+              0 0 0 10px rgba(37, 211, 102, 0);
+          }
+        }
+
+        @keyframes wa-badge-pop {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.08); }
+        }
+
+        @keyframes wa-icon-breathe {
+          0%, 100% { transform: scale(1); }
+          50% { transform: scale(1.04); }
+        }
+      `}</style>
+
+      <div
+        className={`fixed bottom-5 right-5 sm:bottom-6 sm:right-6 z-50 transition-all duration-500 ${
+          isVisible
+            ? 'translate-y-0 opacity-100'
+            : 'translate-y-6 opacity-0 pointer-events-none'
+        }`}
+      >
         <button
           onClick={handleClick}
-          className="relative bg-gradient-to-br from-green-500 to-green-600 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 group"
           aria-label="Chat on WhatsApp"
+          className="group relative flex items-center justify-center rounded-full transition-all duration-300 hover:-translate-y-1 active:scale-[0.96] focus:outline-none"
+          style={{
+            width: '68px',
+            height: '68px',
+            background:
+              'linear-gradient(135deg, #1fa855 0%, #25D366 55%, #2ee879 100%)',
+            border: '1px solid rgba(255,255,255,.16)',
+            boxShadow:
+              '0 12px 30px rgba(37,211,102,.24), inset 0 1px 0 rgba(255,255,255,.18)',
+            animation: 'wa-float-soft 3.2s ease-in-out infinite, wa-glow-soft 3s ease-in-out infinite',
+            WebkitBackdropFilter: 'blur(14px)',
+            backdropFilter: 'blur(14px)',
+          }}
         >
-          <MessageCircle className="w-7 h-7" />
-          
-          {/* Tooltip */}
-          <div className="absolute right-full mr-4 top-1/2 -translate-y-1/2 bg-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 whitespace-nowrap">
-            Chat with us
-            <div className="absolute top-1/2 left-full -translate-y-1/2 border-8 border-transparent border-l-gray-900"></div>
+          <div
+            className="absolute inset-[2px] rounded-full pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,0) 40%)',
+            }}
+          />
+
+          <div
+            className="relative flex items-center justify-center"
+            style={{ animation: 'wa-icon-breathe 2.2s ease-in-out infinite' }}
+          >
+            <FaWhatsapp
+              className="text-white transition-transform duration-300 group-hover:scale-110"
+              style={{ width: 32, height: 32 }}
+            />
           </div>
-          
-          {/* Notification Badge */}
-          <div className="absolute -top-1 -right-1 bg-brand-yellow text-white text-xs w-6 h-6 rounded-full flex items-center justify-center animate-bounce">
+
+          <div
+            className="absolute -top-1 -right-1 min-w-[24px] h-[24px] px-1 rounded-full flex items-center justify-center text-[10px] font-bold text-white"
+            style={{
+              background: 'linear-gradient(135deg,#f59e0b,#fbbf24)',
+              boxShadow: '0 6px 14px rgba(245,158,11,.35)',
+              animation: 'wa-badge-pop 1.8s ease-in-out infinite',
+            }}
+          >
             1
           </div>
         </button>
       </div>
-      
-      {/* Additional Buttons (Optional) */}
-      <div className="mt-3 space-y-2">
-        <button
-          onClick={() => window.open(`tel:${whatsappNumber}`, '_self')}
-          className="bg-gradient-to-r from-brand-purple to-brand-purple-light text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:shadow-xl transition-all flex items-center justify-center space-x-2 w-full"
-        >
-          <span>Chat Now</span>
-        </button>
-      </div>
-    </div>
+    </>
   );
 };
 

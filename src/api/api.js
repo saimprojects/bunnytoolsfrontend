@@ -51,14 +51,12 @@ async function request(path, options = {}) {
 }
 
 /* =========================
-   API METHODS
+   PRODUCTS API METHODS
    ========================= */
 
-// Simple function for single page
 export async function getProducts() {
   try {
     const data = await request("/api/products/");
-    // Return just the array of products
     return data?.results || data || [];
   } catch (error) {
     console.error("Error fetching products:", error);
@@ -66,13 +64,12 @@ export async function getProducts() {
   }
 }
 
-// Function to get ALL products with pagination handling
 export async function getAllProducts() {
   try {
     let allProducts = [];
     let currentUrl = "/api/products/";
     let page = 1;
-    const maxPages = 5; // Safety limit
+    const maxPages = 5;
     
     while (currentUrl && page <= maxPages) {
       try {
@@ -80,9 +77,8 @@ export async function getAllProducts() {
         
         if (data && data.results && data.results.length > 0) {
           allProducts = [...allProducts, ...data.results];
-          currentUrl = data.next; // Next page URL (could be absolute or relative)
+          currentUrl = data.next;
           
-          // If no next page, break
           if (!currentUrl) break;
           
           page++;
@@ -100,7 +96,6 @@ export async function getAllProducts() {
   } catch (error) {
     console.error("Error in getAllProducts:", error);
     
-    // Fallback: Try to get at least one page
     try {
       const fallbackData = await request("/api/products/");
       return fallbackData?.results || fallbackData || [];
@@ -168,5 +163,71 @@ export async function getReviewStats() {
   } catch (error) {
     console.warn("Review stats endpoint not available:", error.message);
     return null;
+  }
+}
+
+/* =========================
+   ORDER API METHODS
+   ========================= */
+
+export async function getBankAccounts() {
+  try {
+    const data = await request("/api/bank-accounts/");
+    return data?.results || data || [];
+  } catch (error) {
+    console.error("Error fetching bank accounts:", error);
+    return [];
+  }
+}
+
+export async function createOrder(orderData) {
+  try {
+    const response = await fetch(`${API_BASE_URL}/api/orders/`, {
+      method: 'POST',
+      body: orderData, // FormData object
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.detail || `HTTP ${response.status}`);
+    }
+    
+    return response.json();
+  } catch (error) {
+    console.error("Error creating order:", error);
+    throw error;
+  }
+}
+
+export async function trackOrderById(orderId) {
+  if (!orderId) throw new Error("Order ID is required");
+  try {
+    const data = await request(`/api/orders/track/?order_id=${orderId}`);
+    return data;
+  } catch (error) {
+    console.error("Error tracking order:", error);
+    throw error;
+  }
+}
+
+export async function trackOrdersByEmail(email) {
+  if (!email) throw new Error("Email is required");
+  try {
+    const data = await request(`/api/orders/track/?email=${encodeURIComponent(email)}`);
+    return data;
+  } catch (error) {
+    console.error("Error tracking orders by email:", error);
+    throw error;
+  }
+}
+
+export async function getProductPlans(productId) {
+  if (!productId) throw new Error("Product ID is required");
+  try {
+    const data = await request(`/api/plans/?product=${productId}`);
+    return data?.results || data || [];
+  } catch (error) {
+    console.error(`Error fetching plans for product ${productId}:`, error);
+    return [];
   }
 }

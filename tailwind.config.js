@@ -15,13 +15,18 @@ export default {
         'brand-black': '#111827',
         'brand-white': '#FFFFFF',
       },
+      // Add gradient color stops
+      gradientColorStops: theme => ({
+        ...theme('colors'),
+        'brand-purple': '#6B21A8',
+        'brand-yellow': '#F59E0B',
+      }),
       fontFamily: {
         sans: ['Inter', 'system-ui', 'sans-serif'],
       },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
       },
       animation: {
         float: 'float 6s ease-in-out infinite',
