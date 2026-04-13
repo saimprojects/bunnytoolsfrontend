@@ -622,8 +622,8 @@ const Hero = () => {
   const bunnyProSuite = {
     title: 'Bunny Pro Suite',
     description: 'All-in-one premium tools bundle',
-    price: 999,
-    originalPrice: 1499,
+    price: 1499,
+    originalPrice: 30000,
     discount: 30,
     features: [
       'AI-Powered Tools Access',
