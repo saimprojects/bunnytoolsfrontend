@@ -1,4 +1,4 @@
-// src/pages/HomePage.jsx - Complete with BunnyFlow Scroll-Driven Section
+// src/pages/HomePage.jsx - Complete with BunnyFlow Section (Simple Animation)
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import HomeCards from '../components/home/HomeCards';
@@ -9,7 +9,8 @@ import {
   Sparkles, Star, Download, Shield, Zap, Cpu, ArrowRight, Users,
   Package, HeartHandshake, Globe, BarChart3, Lock, RefreshCw, Rocket,
   Award, Headphones, CreditCard, MessageCircle, ThumbsUp, Layers,
-  Crown, Gem, Video, Image, Chrome, ExternalLink, Play
+  Crown, Gem, Video, Image as ImageIcon, Chrome, ExternalLink, Play,
+  Check, TrendingUp, Infinity
 } from 'lucide-react';
 
 // ─── THEME TOKENS ────────────────────────────────────────────────────────────
@@ -49,6 +50,10 @@ html { scroll-behavior: smooth; }
 @keyframes slide-left {
   from{transform:translateX(0)}
   to{transform:translateX(-50%)}
+}
+@keyframes scale-in {
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
 }
 
 .text-gradient-p {
@@ -387,10 +392,11 @@ function PinnedNumbers() {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// 🚀 BUNNYFLOW PINNED SCROLL-DRIVEN SECTION
+// 🚀 BUNNYFLOW SECTION - SIMPLE REVEAL ANIMATION (NO SCROLL LOCK)
 // ──────────────────────────────────────────────────────────────────────────────
-function PinnedBunnyFlow() {
-  const { sectionRef, progress, wrapperStyle } = useScrollLockSection(900);
+function BunnyFlowSection() {
+  const ref = useRef(null);
+  const isVisible = useInView(ref, 0.1);
   const { width: ww } = useWindowSize();
   const mob = ww < 768;
 
@@ -402,7 +408,7 @@ function PinnedBunnyFlow() {
 
   const features = [
     { icon: Video, title: 'Veo 3.1 Video', desc: 'Cinematic AI videos in seconds', color: '#7c3aed' },
-    { icon: Image, title: 'Google Whisk', desc: 'Unlimited AI image generation', color: '#ec4899' },
+    { icon: ImageIcon, title: 'Google Whisk', desc: 'Unlimited AI image generation', color: '#ec4899' },
     { icon: Crown, title: 'Gemini Pro', desc: 'Full Google AI access', color: '#f59e0b' },
     { icon: Chrome, title: 'Chrome Extension', desc: '30-second setup', color: '#10b981' },
   ];
@@ -416,7 +422,7 @@ function PinnedBunnyFlow() {
 
   if (mob) {
     return (
-      <section className="py-16 px-4" style={{ background: T.dd }}>
+      <section ref={ref} className="py-16 px-4" style={{ background: T.dd }}>
         <div className="text-center mb-8">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4" style={{ background: 'rgba(124,58,237,.15)', border: '1px solid rgba(124,58,237,.3)' }}>
             <Crown className="w-4 h-4 text-yellow-400" /><span className="font-mono text-xs text-purple-300">Flagship Product</span>
@@ -439,57 +445,123 @@ function PinnedBunnyFlow() {
   }
 
   return (
-    <div ref={sectionRef} className="scroll-lock-wrapper" style={{ ...wrapperStyle, background: T.dd }}>
-      <div className="scroll-lock-sticky">
-        <Blob color="rgba(124,58,237,.12)" size={600} style={{ top: '-10%', left: '-5%' }} />
-        <Blob color="rgba(236,72,153,.08)" size={500} style={{ bottom: '-10%', right: '-5%' }} />
-        <Blob color="rgba(245,158,11,.06)" size={400} style={{ top: '40%', right: '10%' }} />
+    <section ref={ref} className="py-20 relative overflow-hidden" style={{ background: T.dd }}>
+      <Blob color="rgba(124,58,237,.12)" size={600} style={{ top: '-10%', left: '-5%' }} />
+      <Blob color="rgba(236,72,153,.08)" size={500} style={{ bottom: '-10%', right: '-5%' }} />
+      <Blob color="rgba(245,158,11,.06)" size={400} style={{ top: '40%', right: '10%' }} />
 
-        <div className="w-full px-4 sm:px-8 relative z-10">
-          <div className="max-w-7xl mx-auto">
-            <div style={{ opacity: Math.min(1, progress * 4), transform: `translateY(${(1 - Math.min(1, progress * 4)) * 30}px)` }}>
-              <div className="flex items-center justify-center gap-4 mb-4">
-                <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full" style={{ background: 'rgba(124,58,237,.15)', border: '1px solid rgba(124,58,237,.3)', animation: 'pulse-glow 3s ease-in-out infinite' }}>
-                  <Crown className="w-4 h-4 text-yellow-400" /><span className="font-mono text-xs tracking-widest uppercase text-purple-300">Flagship Product</span><Sparkles className="w-4 h-4 text-purple-400" />
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
+        {/* Header with Reveal Animation */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all .8s cubic-bezier(.16,1,.3,1)' }}>
+          <div className="flex items-center justify-center gap-4 mb-4">
+            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full" style={{ background: 'rgba(124,58,237,.15)', border: '1px solid rgba(124,58,237,.3)', animation: 'pulse-glow 3s ease-in-out infinite' }}>
+              <Crown className="w-4 h-4 text-yellow-400" />
+              <span className="font-mono text-xs tracking-widest uppercase text-purple-300">Our Topmost Loving Product</span>
+              <Sparkles className="w-4 h-4 text-purple-400" />
+            </div>
+          </div>
+          <h2 className="font-display text-4xl lg:text-6xl font-bold text-center mb-3">
+            <span className="text-white">Introducing </span>
+            <span className="text-gradient-y">BunnyFlow</span>
+          </h2>
+          <p className="text-lg text-gray-400 text-center max-w-2xl mx-auto">
+            Direct access to Google Flow's AI generation — powered by a simple credit system.
+            <br /><span className="text-purple-400">Veo 3.1 · Gemini Pro · Google Whisk</span>
+          </p>
+        </div>
+
+        {/* CTA Buttons */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .8s cubic-bezier(.16,1,.3,1) .1s' }}>
+          <div className="flex flex-wrap gap-4 justify-center my-8">
+            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-display font-bold text-white transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 10px 40px rgba(124,58,237,.4)' }}>
+              <Rocket className="w-5 h-5" />
+              <span>Try BunnyFlow Free</span>
+              <ExternalLink className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+            </a>
+            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-display font-bold border-2 border-purple-400 text-purple-300 hover:bg-purple-500/10 transition-all duration-300">
+              <Chrome className="w-5 h-5" />
+              <span>Download Extension</span>
+            </a>
+          </div>
+        </div>
+
+        {/* Stats */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'scale(1)' : 'scale(.9)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .15s' }}>
+          <div className="flex justify-center gap-8 my-8">
+            {[{ v: '20cr', l: 'Per Video' }, { v: '5cr', l: 'Per Image' }, { v: '999K', l: 'Max Credits' }].map((s, i) => (
+              <div key={i} className="text-center glass-dark rounded-xl px-6 py-3 border border-purple-500/20">
+                <div className="font-display text-2xl font-bold text-white">{s.v}</div>
+                <div className="font-mono text-[10px] text-gray-400">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Features Grid */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .2s' }}>
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            {features.map((f, i) => (
+              <div key={i} className="glass-dark rounded-2xl p-5 border border-purple-500/20 hover:border-purple-400/40 transition-all hover:scale-105 duration-300">
+                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${f.color}20`, color: f.color }}>
+                  <f.icon className="w-5 h-5" />
+                </div>
+                <h4 className="font-display font-bold text-white text-sm mb-1">{f.title}</h4>
+                <p className="text-gray-400 text-xs">{f.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Plans */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .25s' }}>
+          <div className="grid lg:grid-cols-3 gap-5 mb-8">
+            {plans.map((p, i) => (
+              <div key={i} className={`relative rounded-2xl p-6 backdrop-blur-xl border transition-all hover:scale-105 duration-300 ${p.popular ? 'border-purple-400 shadow-xl shadow-purple-500/30' : 'border-white/10'}`} style={{ background: p.popular ? 'linear-gradient(135deg,rgba(124,58,237,.2),rgba(124,58,237,.05))' : 'rgba(255,255,255,.03)' }}>
+                {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs px-4 py-1 rounded-full font-bold">⭐ BEST VALUE</div>}
+                <div className="text-center">
+                  <h4 className={`font-display text-xl font-bold ${p.popular ? 'text-gradient-p' : 'text-white'}`}>{p.name}</h4>
+                  <p className="text-sm text-gray-400 mb-3">{p.duration}</p>
+                  <div className="text-3xl font-display font-bold text-white mb-1">{p.price}</div>
+                  <p className="text-xs text-gray-500 mb-4">{p.name === 'Free Trial' ? 'Trial Credits' : 'Unlimited Credits'}</p>
+                  <div className={`inline-block px-4 py-1.5 rounded-full text-xs font-medium ${p.popular ? 'bg-purple-500/20 text-purple-300' : 'bg-white/5 text-gray-400'}`}>
+                    {p.duration} Access
+                  </div>
                 </div>
               </div>
-              <h2 className="font-display text-4xl lg:text-6xl font-bold text-center mb-3"><span className="text-white">Introducing </span><span className="text-gradient-y">BunnyFlow</span></h2>
-              <p className="text-lg text-gray-400 text-center max-w-2xl mx-auto">Direct access to Google Flow's AI generation — powered by a simple credit system.<br /><span className="text-purple-400">Veo 3.1 · Gemini Pro · Google Whisk</span></p>
-            </div>
+            ))}
+          </div>
+        </div>
 
-            <div className="flex justify-center gap-8 my-8" style={{ opacity: Math.max(0, progress - 0.05) * 2, transform: `scale(${0.9 + Math.min(progress * 0.1, 0.1)})` }}>
-              {[{ v: '20cr', l: 'Per Video' }, { v: '5cr', l: 'Per Image' }, { v: '999K', l: 'Max Credits' }].map((s, i) => (<div key={i} className="text-center glass-dark rounded-xl px-6 py-3 border border-purple-500/20"><div className="font-display text-2xl font-bold text-white">{s.v}</div><div className="font-mono text-[10px] text-gray-400">{s.l}</div></div>))}
-            </div>
-
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-              {features.map((f, i) => {
-                const fp = Math.max(0, Math.min(1, (progress - 0.1 - i * 0.05) / 0.15));
-                return (<div key={i} className="glass-dark rounded-2xl p-5 border border-purple-500/20" style={{ opacity: fp, transform: `translateY(${(1 - fp) * 20}px)` }}><div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${f.color}20`, color: f.color }}><f.icon className="w-5 h-5" /></div><h4 className="font-display font-bold text-white text-sm mb-1">{f.title}</h4><p className="text-gray-400 text-xs">{f.desc}</p></div>);
-              })}
-            </div>
-
-            <div className="grid lg:grid-cols-3 gap-5 mb-8">
-              {plans.map((p, i) => {
-                const pp = Math.max(0, Math.min(1, (progress - 0.15 - i * 0.08) / 0.18));
-                return (<div key={i} className={`relative rounded-2xl p-6 backdrop-blur-xl border transition-all ${p.popular ? 'border-purple-400 shadow-xl shadow-purple-500/30 scale-105' : 'border-white/10'}`} style={{ background: p.popular ? 'linear-gradient(135deg,rgba(124,58,237,.2),rgba(124,58,237,.05))' : 'rgba(255,255,255,.03)', opacity: pp, transform: `translateY(${(1 - pp) * 30}px)` }}>{p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs px-4 py-1 rounded-full font-bold">⭐ BEST VALUE</div>}<div className="text-center"><h4 className={`font-display text-xl font-bold ${p.popular ? 'text-gradient-p' : 'text-white'}`}>{p.name}</h4><p className="text-sm text-gray-400 mb-3">{p.duration}</p><div className="text-3xl font-display font-bold text-white mb-1">{p.price}</div><p className="text-xs text-gray-500 mb-4">{p.name === 'Free Trial' ? 'Trial Credits' : 'Unlimited Credits'}</p></div></div>);
-              })}
-            </div>
-
-            <div className="overflow-hidden mb-8" style={{ opacity: Math.max(0, progress - 0.25) }}>
-              <div className="flex gap-4 animate-[slide-left_30s_linear_infinite]">
-                {[...testimonials, ...testimonials].map((t, i) => (<div key={i} className="flex-shrink-0 w-72 glass-dark rounded-xl p-4 border border-purple-500/20"><p className="text-gray-300 text-sm mb-2">"{t.text}"</p><p className="font-display font-bold text-white text-sm">{t.name}</p></div>))}
-              </div>
-            </div>
-
-            <div className="text-center" style={{ opacity: Math.max(0, progress - 0.3) }}>
-              <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-display font-bold text-white transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 20px 50px rgba(124,58,237,.5)' }}><Rocket className="w-5 h-5" /><span>Start Generating AI Videos Today</span><ExternalLink className="w-4 h-4" /></a>
-              <p className="text-gray-500 text-sm mt-3">1-day free trial · No credit card · Instant access</p>
+        {/* Testimonials Marquee */}
+        <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity .8s ease .3s' }}>
+          <div className="overflow-hidden mb-8">
+            <div className="flex gap-4 animate-[slide-left_30s_linear_infinite]">
+              {[...testimonials, ...testimonials].map((t, i) => (
+                <div key={i} className="flex-shrink-0 w-72 glass-dark rounded-xl p-4 border border-purple-500/20">
+                  <p className="text-gray-300 text-sm mb-2">"{t.text}"</p>
+                  <div className="flex items-center gap-2">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold">{t.name.charAt(0)}</div>
+                    <p className="font-display font-bold text-white text-sm">{t.name}</p>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
         </div>
-        <ProgressRing progress={progress} /><ScrollHint visible progress={progress} />
+
+        {/* Bottom CTA */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .35s' }}>
+          <div className="text-center">
+            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-display font-bold text-white transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 20px 50px rgba(124,58,237,.5)' }}>
+              <Play className="w-5 h-5" />
+              <span>Start Generating AI Videos Today</span>
+              <ExternalLink className="w-4 h-4" />
+            </a>
+            <p className="text-gray-500 text-sm mt-3">1-day free trial · No credit card · Instant access</p>
+          </div>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -576,6 +648,7 @@ const HomePage = () => {
       <style>{CSS}</style>
       <ScrollBar />
       <Hero />
+
       <div className="py-3 overflow-hidden bg-[#160d2e] border-y border-purple-500/10">
         <div className="flex whitespace-nowrap animate-[marquee_35s_linear_infinite]">
           {[...Array(3)].map((_, si) => (<React.Fragment key={si}>{marqueeItems.map((t, i) => (<span key={`${si}-${i}`} className="mx-4 md:mx-6 font-mono text-[10px] md:text-xs font-medium tracking-wide" style={{ color: t === '✦' ? '#a78bfa' : '#cbd5e1' }}>{t}</span>))}</React.Fragment>))}
@@ -589,6 +662,9 @@ const HomePage = () => {
         subtitle="Handpicked premium tools with a cleaner compact card layout, smoother shuffle, and stronger purple branding."
         products={featuredSoftwares} loading={loading} viewAllLink="/products" featuredMode={true} trendingMode={false} cardMaxWidth={720}
       />
+
+      {/* 🚀 BUNNYFLOW FLAGSHIP SECTION - After Featured Tools */}
+      <BunnyFlowSection />
 
       <TrustSection />
       <ProcessSection />
@@ -607,10 +683,6 @@ const HomePage = () => {
 
       <PinnedTextReveal />
       <PinnedNumbers />
-
-      {/* 🚀 BUNNYFLOW FLAGSHIP SECTION - SCROLL DRIVEN */}
-      <PinnedBunnyFlow />
-
       <StatsSection />
       <WhySection />
       <FAQSection />
