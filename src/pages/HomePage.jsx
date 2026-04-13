@@ -10,7 +10,7 @@ import {
   Package, HeartHandshake, Globe, BarChart3, Lock, RefreshCw, Rocket,
   Award, Headphones, CreditCard, MessageCircle, ThumbsUp, Layers,
   Crown, Gem, Video, Image as ImageIcon, Chrome, ExternalLink, Play,
-  Check, TrendingUp, Infinity
+  Check, TrendingUp, Infinity, Monitor, Smartphone
 } from 'lucide-react';
 
 // ─── THEME TOKENS ────────────────────────────────────────────────────────────
@@ -55,12 +55,18 @@ html { scroll-behavior: smooth; }
   from{opacity:0;transform:scale(.9)}
   to{opacity:1;transform:scale(1)}
 }
+@keyframes float-slow {
+  0%,100%{transform:translateY(0) rotate(0deg)}
+  33%{transform:translateY(-15px) rotate(2deg)}
+  66%{transform:translateY(10px) rotate(-1deg)}
+}
 
 .text-gradient-p {
   background: linear-gradient(90deg,#7c3aed,#a855f7,#c084fc);
   background-size: 200% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   animation: gradient-x 4s ease infinite;
 }
 .text-gradient-y {
@@ -68,6 +74,7 @@ html { scroll-behavior: smooth; }
   background-size: 200% 100%;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
   animation: gradient-x 4s ease infinite;
 }
 .glass-light {
@@ -392,13 +399,17 @@ function PinnedNumbers() {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// 🚀 BUNNYFLOW SECTION - SIMPLE REVEAL ANIMATION (NO SCROLL LOCK)
+// 🚀 BUNNYFLOW SECTION - WITH LANDING PAGE & DASHBOARD IMAGES
 // ──────────────────────────────────────────────────────────────────────────────
 function BunnyFlowSection() {
   const ref = useRef(null);
   const isVisible = useInView(ref, 0.1);
   const { width: ww } = useWindowSize();
   const mob = ww < 768;
+
+  // Cloudinary Images
+  const landingImage = 'https://res.cloudinary.com/dxommxt6d/image/upload/v1776067995/1_ecnfsa.png';
+  const dashboardImage = 'https://res.cloudinary.com/dxommxt6d/image/upload/v1776067995/2_mtbot7.png';
 
   const plans = [
     { name: 'Free Trial', duration: '1 Day', price: 'Free', popular: false, color: 'from-gray-500 to-gray-600' },
@@ -456,16 +467,17 @@ function BunnyFlowSection() {
           <div className="flex items-center justify-center gap-4 mb-4">
             <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full" style={{ background: 'rgba(124,58,237,.15)', border: '1px solid rgba(124,58,237,.3)', animation: 'pulse-glow 3s ease-in-out infinite' }}>
               <Crown className="w-4 h-4 text-yellow-400" />
-              <span className="font-mono text-xs tracking-widest uppercase text-purple-300">Our Topmost Loving Product</span>
+              <span className="font-mono text-xs tracking-widest uppercase text-purple-300">Flagship Product</span>
               <Sparkles className="w-4 h-4 text-purple-400" />
             </div>
           </div>
           <h2 className="font-display text-4xl lg:text-6xl font-bold text-center mb-3">
-            <span className="text-white">Introducing </span>
-            <span className="text-gradient-y">BunnyFlow</span>
+            <span className="text-white">AI Videos. </span>
+            <span className="text-gradient-y">Your Credits.</span>
+            <span className="text-white"> Zero Hassle.</span>
           </h2>
           <p className="text-lg text-gray-400 text-center max-w-2xl mx-auto">
-            Direct access to Google Flow's AI generation — powered by a simple credit system.
+            BunnyFlow gives you direct access to Google Flow's AI generation — powered by a simple credit system.
             <br /><span className="text-purple-400">Veo 3.1 · Gemini Pro · Google Whisk</span>
           </p>
         </div>
@@ -475,7 +487,7 @@ function BunnyFlowSection() {
           <div className="flex flex-wrap gap-4 justify-center my-8">
             <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-display font-bold text-white transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 10px 40px rgba(124,58,237,.4)' }}>
               <Rocket className="w-5 h-5" />
-              <span>Try BunnyFlow Free</span>
+              <span>Get Started Free</span>
               <ExternalLink className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
             <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-display font-bold border-2 border-purple-400 text-purple-300 hover:bg-purple-500/10 transition-all duration-300">
@@ -485,9 +497,65 @@ function BunnyFlowSection() {
           </div>
         </div>
 
+        {/* Free Trial Badges */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .15s' }}>
+          <div className="flex flex-wrap items-center justify-center gap-6 mb-10">
+            {[
+              { icon: Check, text: '1-Day Free Trial' },
+              { icon: CreditCard, text: 'No credit card' },
+              { icon: Zap, text: 'Instant access' },
+              { icon: Chrome, text: 'Chrome extension' },
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-2 glass-dark rounded-full px-4 py-2 border border-purple-500/20">
+                <item.icon className="w-4 h-4 text-green-400" />
+                <span className="text-sm text-gray-300">{item.text}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Images Showcase - Landing Page & Dashboard */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all .9s cubic-bezier(.16,1,.3,1) .2s' }}>
+          {/* Landing Page Image */}
+          <div className="relative mb-8 group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative rounded-2xl overflow-hidden border border-purple-500/20 shadow-2xl">
+              <img 
+                src={landingImage} 
+                alt="BunnyFlow Landing Page" 
+                className="w-full h-auto object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-4 left-4 glass-dark rounded-lg px-4 py-2 flex items-center gap-2">
+                <Monitor className="w-4 h-4 text-purple-400" />
+                <span className="text-white text-sm font-medium">Landing Page</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Dashboard Image */}
+          <div className="relative group">
+            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative rounded-2xl overflow-hidden border border-purple-500/20 shadow-2xl">
+              <img 
+                src={dashboardImage} 
+                alt="BunnyFlow Dashboard" 
+                className="w-full h-auto object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-4 left-4 glass-dark rounded-lg px-4 py-2 flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-cyan-400" />
+                <span className="text-white text-sm font-medium">Dashboard Preview</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
         {/* Stats */}
-        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'scale(1)' : 'scale(.9)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .15s' }}>
-          <div className="flex justify-center gap-8 my-8">
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'scale(1)' : 'scale(.9)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .25s' }}>
+          <div className="flex justify-center gap-8 my-10">
             {[{ v: '20cr', l: 'Per Video' }, { v: '5cr', l: 'Per Image' }, { v: '999K', l: 'Max Credits' }].map((s, i) => (
               <div key={i} className="text-center glass-dark rounded-xl px-6 py-3 border border-purple-500/20">
                 <div className="font-display text-2xl font-bold text-white">{s.v}</div>
@@ -498,7 +566,7 @@ function BunnyFlowSection() {
         </div>
 
         {/* Features Grid */}
-        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .2s' }}>
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .3s' }}>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {features.map((f, i) => (
               <div key={i} className="glass-dark rounded-2xl p-5 border border-purple-500/20 hover:border-purple-400/40 transition-all hover:scale-105 duration-300">
@@ -513,7 +581,7 @@ function BunnyFlowSection() {
         </div>
 
         {/* Plans */}
-        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .25s' }}>
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .35s' }}>
           <div className="grid lg:grid-cols-3 gap-5 mb-8">
             {plans.map((p, i) => (
               <div key={i} className={`relative rounded-2xl p-6 backdrop-blur-xl border transition-all hover:scale-105 duration-300 ${p.popular ? 'border-purple-400 shadow-xl shadow-purple-500/30' : 'border-white/10'}`} style={{ background: p.popular ? 'linear-gradient(135deg,rgba(124,58,237,.2),rgba(124,58,237,.05))' : 'rgba(255,255,255,.03)' }}>
@@ -533,7 +601,7 @@ function BunnyFlowSection() {
         </div>
 
         {/* Testimonials Marquee */}
-        <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity .8s ease .3s' }}>
+        <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity .8s ease .4s' }}>
           <div className="overflow-hidden mb-8">
             <div className="flex gap-4 animate-[slide-left_30s_linear_infinite]">
               {[...testimonials, ...testimonials].map((t, i) => (
@@ -550,7 +618,7 @@ function BunnyFlowSection() {
         </div>
 
         {/* Bottom CTA */}
-        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .35s' }}>
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .45s' }}>
           <div className="text-center">
             <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-display font-bold text-white transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 20px 50px rgba(124,58,237,.5)' }}>
               <Play className="w-5 h-5" />
