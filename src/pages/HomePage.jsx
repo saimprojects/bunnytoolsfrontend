@@ -399,13 +399,14 @@ function PinnedNumbers() {
 }
 
 // ──────────────────────────────────────────────────────────────────────────────
-// 🚀 BUNNYFLOW SECTION - WITH LANDING PAGE & DASHBOARD IMAGES
+// 🚀 BUNNYFLOW SECTION - FULLY RESPONSIVE WITH IMAGES
 // ──────────────────────────────────────────────────────────────────────────────
 function BunnyFlowSection() {
   const ref = useRef(null);
   const isVisible = useInView(ref, 0.1);
   const { width: ww } = useWindowSize();
   const mob = ww < 768;
+  const tablet = ww >= 768 && ww < 1024;
 
   // Cloudinary Images
   const landingImage = 'https://res.cloudinary.com/dxommxt6d/image/upload/v1776067995/1_ecnfsa.png';
@@ -431,167 +432,143 @@ function BunnyFlowSection() {
     { name: 'Priya S.', text: 'Clean interface, simple credits, and just works out of the box.' },
   ];
 
-  if (mob) {
-    return (
-      <section ref={ref} className="py-16 px-4" style={{ background: T.dd }}>
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-4" style={{ background: 'rgba(124,58,237,.15)', border: '1px solid rgba(124,58,237,.3)' }}>
-            <Crown className="w-4 h-4 text-yellow-400" /><span className="font-mono text-xs text-purple-300">Flagship Product</span>
-          </div>
-          <h2 className="font-display text-3xl font-bold text-white mb-3">Introducing <span className="text-gradient-y">BunnyFlow</span></h2>
-          <p className="text-gray-400">Veo 3.1 · Gemini Pro · Google Whisk</p>
-        </div>
-        <div className="space-y-4">
-          {plans.map((p, i) => (
-            <div key={i} className={`p-6 rounded-2xl glass-dark ${p.popular ? 'border-2 border-purple-400' : ''}`}>
-              <div className="flex items-center justify-between mb-3"><h3 className="font-display text-xl font-bold text-white">{p.name}</h3><span className="text-sm text-gray-400">{p.duration}</span></div>
-              <div className="text-2xl font-bold text-white mb-4">{p.price}</div>
-              {p.popular && <span className="text-xs bg-yellow-500 text-black px-3 py-1 rounded-full">⭐ BEST VALUE</span>}
-            </div>
-          ))}
-        </div>
-        <div className="mt-8"><a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="block w-full py-4 rounded-xl font-bold text-white text-center" style={{ background: T.gP }}>Try BunnyFlow Free <ExternalLink className="inline w-4 h-4 ml-2" /></a></div>
-      </section>
-    );
-  }
-
   return (
-    <section ref={ref} className="py-20 relative overflow-hidden" style={{ background: T.dd }}>
-      <Blob color="rgba(124,58,237,.12)" size={600} style={{ top: '-10%', left: '-5%' }} />
-      <Blob color="rgba(236,72,153,.08)" size={500} style={{ bottom: '-10%', right: '-5%' }} />
-      <Blob color="rgba(245,158,11,.06)" size={400} style={{ top: '40%', right: '10%' }} />
+    <section ref={ref} className="py-12 md:py-16 lg:py-20 relative overflow-hidden" style={{ background: T.dd }}>
+      <Blob color="rgba(124,58,237,.12)" size={mob ? 300 : 600} style={{ top: '-10%', left: '-5%' }} />
+      <Blob color="rgba(236,72,153,.08)" size={mob ? 250 : 500} style={{ bottom: '-10%', right: '-5%' }} />
+      <Blob color="rgba(245,158,11,.06)" size={mob ? 200 : 400} style={{ top: '40%', right: '10%' }} />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         {/* Header with Reveal Animation */}
-        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all .8s cubic-bezier(.16,1,.3,1)' }}>
-          <div className="flex items-center justify-center gap-4 mb-4">
-            <div className="inline-flex items-center gap-2 px-5 py-2 rounded-full" style={{ background: 'rgba(124,58,237,.15)', border: '1px solid rgba(124,58,237,.3)', animation: 'pulse-glow 3s ease-in-out infinite' }}>
-              <Crown className="w-4 h-4 text-yellow-400" />
-              <span className="font-mono text-xs tracking-widest uppercase text-purple-300">Flagship Product</span>
-              <Sparkles className="w-4 h-4 text-purple-400" />
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .8s cubic-bezier(.16,1,.3,1)' }}>
+          <div className="flex items-center justify-center gap-2 md:gap-4 mb-3 md:mb-4">
+            <div className="inline-flex items-center gap-1.5 md:gap-2 px-3 md:px-5 py-1.5 md:py-2 rounded-full" style={{ background: 'rgba(124,58,237,.15)', border: '1px solid rgba(124,58,237,.3)', animation: 'pulse-glow 3s ease-in-out infinite' }}>
+              <Crown className="w-3 h-3 md:w-4 md:h-4 text-yellow-400" />
+              <span className="font-mono text-[8px] md:text-xs tracking-widest uppercase text-purple-300">Flagship Product</span>
+              <Sparkles className="w-3 h-3 md:w-4 md:h-4 text-purple-400" />
             </div>
           </div>
-          <h2 className="font-display text-4xl lg:text-6xl font-bold text-center mb-3">
+          <h2 className="font-display text-2xl md:text-4xl lg:text-6xl font-bold text-center mb-2 md:mb-3 px-2">
             <span className="text-white">AI Videos. </span>
             <span className="text-gradient-y">Your Credits.</span>
             <span className="text-white"> Zero Hassle.</span>
           </h2>
-          <p className="text-lg text-gray-400 text-center max-w-2xl mx-auto">
+          <p className="text-sm md:text-lg text-gray-400 text-center max-w-2xl mx-auto px-4">
             BunnyFlow gives you direct access to Google Flow's AI generation — powered by a simple credit system.
-            <br /><span className="text-purple-400">Veo 3.1 · Gemini Pro · Google Whisk</span>
+            <br /><span className="text-purple-400 text-xs md:text-base">Veo 3.1 · Gemini Pro · Google Whisk</span>
           </p>
         </div>
 
-        {/* CTA Buttons */}
-        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .8s cubic-bezier(.16,1,.3,1) .1s' }}>
-          <div className="flex flex-wrap gap-4 justify-center my-8">
-            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-display font-bold text-white transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 10px 40px rgba(124,58,237,.4)' }}>
-              <Rocket className="w-5 h-5" />
+        {/* CTA Buttons - Responsive */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'all .8s cubic-bezier(.16,1,.3,1) .1s' }}>
+          <div className="flex flex-col sm:flex-row gap-3 justify-center my-6 md:my-8 px-4">
+            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="group inline-flex items-center justify-center gap-2 md:gap-3 px-5 md:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl font-display font-bold text-white text-sm md:text-base transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 10px 40px rgba(124,58,237,.4)' }}>
+              <Rocket className="w-4 h-4 md:w-5 md:h-5" />
               <span>Get Started Free</span>
-              <ExternalLink className="w-4 h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+              <ExternalLink className="w-3 h-3 md:w-4 md:h-4 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
             </a>
-            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-8 py-4 rounded-2xl font-display font-bold border-2 border-purple-400 text-purple-300 hover:bg-purple-500/10 transition-all duration-300">
-              <Chrome className="w-5 h-5" />
+            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 md:gap-3 px-5 md:px-8 py-3 md:py-4 rounded-xl md:rounded-2xl font-display font-bold border-2 border-purple-400 text-purple-300 hover:bg-purple-500/10 transition-all duration-300 text-sm md:text-base">
+              <Chrome className="w-4 h-4 md:w-5 md:h-5" />
               <span>Download Extension</span>
             </a>
           </div>
         </div>
 
-        {/* Free Trial Badges */}
+        {/* Free Trial Badges - Responsive Grid */}
         <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .15s' }}>
-          <div className="flex flex-wrap items-center justify-center gap-6 mb-10">
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center justify-center gap-2 md:gap-4 mb-6 md:mb-10 px-2">
             {[
               { icon: Check, text: '1-Day Free Trial' },
               { icon: CreditCard, text: 'No credit card' },
               { icon: Zap, text: 'Instant access' },
               { icon: Chrome, text: 'Chrome extension' },
             ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 glass-dark rounded-full px-4 py-2 border border-purple-500/20">
-                <item.icon className="w-4 h-4 text-green-400" />
-                <span className="text-sm text-gray-300">{item.text}</span>
+              <div key={i} className="flex items-center justify-center gap-1.5 md:gap-2 glass-dark rounded-full px-3 md:px-4 py-1.5 md:py-2 border border-purple-500/20">
+                <item.icon className="w-3 h-3 md:w-4 md:h-4 text-green-400" />
+                <span className="text-[10px] md:text-sm text-gray-300 whitespace-nowrap">{item.text}</span>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Images Showcase - Landing Page & Dashboard */}
-        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(40px)', transition: 'all .9s cubic-bezier(.16,1,.3,1) .2s' }}>
+        {/* Images Showcase - Landing Page & Dashboard - Responsive */}
+        <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .9s cubic-bezier(.16,1,.3,1) .2s' }} className="px-2 md:px-0">
           {/* Landing Page Image */}
-          <div className="relative mb-8 group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative rounded-2xl overflow-hidden border border-purple-500/20 shadow-2xl">
+          <div className="relative mb-4 md:mb-8 group">
+            <div className="absolute -inset-0.5 md:-inset-1 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl md:rounded-2xl blur-lg md:blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative rounded-xl md:rounded-2xl overflow-hidden border border-purple-500/20 shadow-xl md:shadow-2xl">
               <img 
                 src={landingImage} 
                 alt="BunnyFlow Landing Page" 
                 className="w-full h-auto object-cover"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-4 left-4 glass-dark rounded-lg px-4 py-2 flex items-center gap-2">
-                <Monitor className="w-4 h-4 text-purple-400" />
-                <span className="text-white text-sm font-medium">Landing Page</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 glass-dark rounded-lg px-2 md:px-4 py-1 md:py-2 flex items-center gap-1.5 md:gap-2">
+                <Monitor className="w-3 h-3 md:w-4 md:h-4 text-purple-400" />
+                <span className="text-white text-[10px] md:text-sm font-medium">Landing Page</span>
               </div>
             </div>
           </div>
 
           {/* Dashboard Image */}
           <div className="relative group">
-            <div className="absolute -inset-1 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="relative rounded-2xl overflow-hidden border border-purple-500/20 shadow-2xl">
+            <div className="absolute -inset-0.5 md:-inset-1 bg-gradient-to-r from-blue-500/20 to-cyan-500/20 rounded-xl md:rounded-2xl blur-lg md:blur-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+            <div className="relative rounded-xl md:rounded-2xl overflow-hidden border border-purple-500/20 shadow-xl md:shadow-2xl">
               <img 
                 src={dashboardImage} 
                 alt="BunnyFlow Dashboard" 
                 className="w-full h-auto object-cover"
                 loading="lazy"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent pointer-events-none" />
-              <div className="absolute bottom-4 left-4 glass-dark rounded-lg px-4 py-2 flex items-center gap-2">
-                <Smartphone className="w-4 h-4 text-cyan-400" />
-                <span className="text-white text-sm font-medium">Dashboard Preview</span>
+              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
+              <div className="absolute bottom-2 left-2 md:bottom-4 md:left-4 glass-dark rounded-lg px-2 md:px-4 py-1 md:py-2 flex items-center gap-1.5 md:gap-2">
+                <Smartphone className="w-3 h-3 md:w-4 md:h-4 text-cyan-400" />
+                <span className="text-white text-[10px] md:text-sm font-medium">Dashboard Preview</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Stats */}
+        {/* Stats - Responsive */}
         <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'scale(1)' : 'scale(.9)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .25s' }}>
-          <div className="flex justify-center gap-8 my-10">
+          <div className="flex flex-wrap justify-center gap-3 md:gap-8 my-6 md:my-10 px-2">
             {[{ v: '20cr', l: 'Per Video' }, { v: '5cr', l: 'Per Image' }, { v: '999K', l: 'Max Credits' }].map((s, i) => (
-              <div key={i} className="text-center glass-dark rounded-xl px-6 py-3 border border-purple-500/20">
-                <div className="font-display text-2xl font-bold text-white">{s.v}</div>
-                <div className="font-mono text-[10px] text-gray-400">{s.l}</div>
+              <div key={i} className="text-center glass-dark rounded-lg md:rounded-xl px-4 md:px-6 py-2 md:py-3 border border-purple-500/20">
+                <div className="font-display text-lg md:text-2xl font-bold text-white">{s.v}</div>
+                <div className="font-mono text-[8px] md:text-[10px] text-gray-400">{s.l}</div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Features Grid */}
+        {/* Features Grid - Responsive */}
         <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .3s' }}>
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-2 md:gap-4 mb-6 md:mb-8 px-2 md:px-0">
             {features.map((f, i) => (
-              <div key={i} className="glass-dark rounded-2xl p-5 border border-purple-500/20 hover:border-purple-400/40 transition-all hover:scale-105 duration-300">
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-3" style={{ background: `${f.color}20`, color: f.color }}>
-                  <f.icon className="w-5 h-5" />
+              <div key={i} className="glass-dark rounded-xl md:rounded-2xl p-3 md:p-5 border border-purple-500/20 hover:border-purple-400/40 transition-all hover:scale-105 duration-300">
+                <div className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl flex items-center justify-center mb-2 md:mb-3" style={{ background: `${f.color}20`, color: f.color }}>
+                  <f.icon className="w-4 h-4 md:w-5 md:h-5" />
                 </div>
-                <h4 className="font-display font-bold text-white text-sm mb-1">{f.title}</h4>
-                <p className="text-gray-400 text-xs">{f.desc}</p>
+                <h4 className="font-display font-bold text-white text-xs md:text-sm mb-0.5 md:mb-1">{f.title}</h4>
+                <p className="text-gray-400 text-[10px] md:text-xs">{f.desc}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Plans */}
+        {/* Plans - Responsive */}
         <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(30px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .35s' }}>
-          <div className="grid lg:grid-cols-3 gap-5 mb-8">
+          <div className={`grid ${mob ? 'grid-cols-1' : 'lg:grid-cols-3'} gap-3 md:gap-5 mb-6 md:mb-8 px-2 md:px-0`}>
             {plans.map((p, i) => (
-              <div key={i} className={`relative rounded-2xl p-6 backdrop-blur-xl border transition-all hover:scale-105 duration-300 ${p.popular ? 'border-purple-400 shadow-xl shadow-purple-500/30' : 'border-white/10'}`} style={{ background: p.popular ? 'linear-gradient(135deg,rgba(124,58,237,.2),rgba(124,58,237,.05))' : 'rgba(255,255,255,.03)' }}>
-                {p.popular && <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs px-4 py-1 rounded-full font-bold">⭐ BEST VALUE</div>}
+              <div key={i} className={`relative rounded-xl md:rounded-2xl p-4 md:p-6 backdrop-blur-xl border transition-all hover:scale-105 duration-300 ${p.popular ? 'border-purple-400 shadow-xl shadow-purple-500/30' : 'border-white/10'}`} style={{ background: p.popular ? 'linear-gradient(135deg,rgba(124,58,237,.2),rgba(124,58,237,.05))' : 'rgba(255,255,255,.03)' }}>
+                {p.popular && <div className="absolute -top-2 md:-top-3 left-1/2 -translate-x-1/2 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-[10px] md:text-xs px-3 md:px-4 py-0.5 md:py-1 rounded-full font-bold whitespace-nowrap">⭐ BEST VALUE</div>}
                 <div className="text-center">
-                  <h4 className={`font-display text-xl font-bold ${p.popular ? 'text-gradient-p' : 'text-white'}`}>{p.name}</h4>
-                  <p className="text-sm text-gray-400 mb-3">{p.duration}</p>
-                  <div className="text-3xl font-display font-bold text-white mb-1">{p.price}</div>
-                  <p className="text-xs text-gray-500 mb-4">{p.name === 'Free Trial' ? 'Trial Credits' : 'Unlimited Credits'}</p>
-                  <div className={`inline-block px-4 py-1.5 rounded-full text-xs font-medium ${p.popular ? 'bg-purple-500/20 text-purple-300' : 'bg-white/5 text-gray-400'}`}>
+                  <h4 className={`font-display text-lg md:text-xl font-bold ${p.popular ? 'text-gradient-p' : 'text-white'}`}>{p.name}</h4>
+                  <p className="text-xs md:text-sm text-gray-400 mb-2 md:mb-3">{p.duration}</p>
+                  <div className="text-2xl md:text-3xl font-display font-bold text-white mb-1">{p.price}</div>
+                  <p className="text-[10px] md:text-xs text-gray-500 mb-3 md:mb-4">{p.name === 'Free Trial' ? 'Trial Credits' : 'Unlimited Credits'}</p>
+                  <div className={`inline-block px-3 md:px-4 py-1 md:py-1.5 rounded-full text-[10px] md:text-xs font-medium ${p.popular ? 'bg-purple-500/20 text-purple-300' : 'bg-white/5 text-gray-400'}`}>
                     {p.duration} Access
                   </div>
                 </div>
@@ -600,16 +577,16 @@ function BunnyFlowSection() {
           </div>
         </div>
 
-        {/* Testimonials Marquee */}
+        {/* Testimonials Marquee - Responsive */}
         <div style={{ opacity: isVisible ? 1 : 0, transition: 'opacity .8s ease .4s' }}>
-          <div className="overflow-hidden mb-8">
-            <div className="flex gap-4 animate-[slide-left_30s_linear_infinite]">
+          <div className="overflow-hidden mb-6 md:mb-8">
+            <div className="flex gap-3 md:gap-4 animate-[slide-left_30s_linear_infinite]">
               {[...testimonials, ...testimonials].map((t, i) => (
-                <div key={i} className="flex-shrink-0 w-72 glass-dark rounded-xl p-4 border border-purple-500/20">
-                  <p className="text-gray-300 text-sm mb-2">"{t.text}"</p>
+                <div key={i} className="flex-shrink-0 w-64 md:w-72 glass-dark rounded-lg md:rounded-xl p-3 md:p-4 border border-purple-500/20">
+                  <p className="text-gray-300 text-xs md:text-sm mb-2">"{t.text}"</p>
                   <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-xs font-bold">{t.name.charAt(0)}</div>
-                    <p className="font-display font-bold text-white text-sm">{t.name}</p>
+                    <div className="w-7 h-7 md:w-8 md:h-8 rounded-full bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center text-white text-[10px] md:text-xs font-bold">{t.name.charAt(0)}</div>
+                    <p className="font-display font-bold text-white text-xs md:text-sm">{t.name}</p>
                   </div>
                 </div>
               ))}
@@ -617,15 +594,15 @@ function BunnyFlowSection() {
           </div>
         </div>
 
-        {/* Bottom CTA */}
+        {/* Bottom CTA - Responsive */}
         <div style={{ opacity: isVisible ? 1 : 0, transform: isVisible ? 'translateY(0)' : 'translateY(20px)', transition: 'all .7s cubic-bezier(.16,1,.3,1) .45s' }}>
-          <div className="text-center">
-            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-3 px-10 py-4 rounded-2xl font-display font-bold text-white transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 20px 50px rgba(124,58,237,.5)' }}>
-              <Play className="w-5 h-5" />
+          <div className="text-center px-4">
+            <a href="https://www.flowbybunny.com/" target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 md:gap-3 px-6 md:px-10 py-3 md:py-4 rounded-xl md:rounded-2xl font-display font-bold text-white text-sm md:text-base transition-all duration-300 hover:shadow-2xl hover:scale-105" style={{ background: T.gP, boxShadow: '0 20px 50px rgba(124,58,237,.5)' }}>
+              <Play className="w-4 h-4 md:w-5 md:h-5" />
               <span>Start Generating AI Videos Today</span>
-              <ExternalLink className="w-4 h-4" />
+              <ExternalLink className="w-3 h-3 md:w-4 md:h-4" />
             </a>
-            <p className="text-gray-500 text-sm mt-3">1-day free trial · No credit card · Instant access</p>
+            <p className="text-gray-500 text-xs md:text-sm mt-2 md:mt-3">1-day free trial · No credit card · Instant access</p>
           </div>
         </div>
       </div>
